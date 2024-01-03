@@ -1,0 +1,60 @@
+#include "sh.h"
+
+// gettoken() has to scane the buf (readed line) and fined th next token
+/*
+buf:  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+  .... . .x.x.x.x. . .y.y.y. .\n\0........................    
+      ^s                         ^es  
+	  ^ps      q - point to token begin  
+	          eq - point to the byte after the token
+		then ps - will point to the next non-whitespace char
+
+
+token:   | ) ( > < >> other end
+return:  | ) ( > < +  a     0 (\0)
+*/
+
+char    *whitespace;
+char    *symbols;
+
+whitespace = " \t\r\n\v";
+symbols = "<|>&;()";
+
+int gettoken(char **ps, char *es, char **q, char **eq)
+{
+	char	*s;
+	int		ret;
+
+	s = *ps;
+	while (s < es && ft_strchr(whitespace, *s))
+		s++;
+	if (q)
+		*q = s;
+	ret = *s;
+	switch (*s)
+	{
+		case 0:
+			break ;
+		case '|':
+		case '(':
+		case ')':
+		case ';':
+		case '&':
+		case '<':
+			s++;
+			break ;
+		case '>':
+			s++;
+			if (*s == '>')
+			{
+				ret = '+';
+				s++;
+			}
+			break;
+		default:
+			ret = 'a';
+			while (s < es && !ft_strchr(whitespace, *s) && !ft_strchr(symbols, *s))
+				s++;
+			break;
+	}
+}

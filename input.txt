@@ -1,0 +1,67 @@
+input: string --> command list
+there is:
+    -> cmd
+    -> token ' " | > < >> << $ VAR=VAL
+    -> file in/out, here_doc
+
+// single quots
+''
+print the literal value of each character within the single-quotes
+
+// double quots
+""
+print the literal value of each character within the single-quotes, exept $
+
+if $:
+    print VAR's value
+if \:
+    print special char \t \n ..
+
+
+
+// env - Prints environment
+// https://www.digitalocean.com/community/tutorials/how-to-read-and-set-environmental-and-shell-variables-on-linux 
+KEY=VAL
+KEY="value with spaces"
+TEST_VAR='Hello World!'
+KEY=value1:value2:...
+
+export TEST_VAR -> set our variable to env (getenv -> to check)
+unset VAR       -> unset a variable, either shell or environmental
+echo '$VAR'     -> print literally
+echo "$VAR"     -> print VAR's VAL
+
+if VAR hasn't been setted:
+    echo $VAR           -> print a NEW_EMPTY_LINE
+    echo "abc$VARde"    -> skip all after $VAR
+
+$export TEST=1
+INFOPATH=/opt/homebrew/share/info:
+TEST=1
+LC_CTYPE=UTF-8
+_=/usr/bin/env
+
+** VAR name is limited with , . | / \ issace() 
+
+// export (Adds/replaces variable in environment)
+
+// unset (Removes variable from environment | $VAR)
+
+// $?
+print exit status
+
+// cd (Changes current working directory, updating PWD and OLDPWD | chdir)
+
+// echo -n (Prints arguments separated with a space followed by a new line| -n | write)
+/*
+ohladkov@c4c4c1:~$ echo "jgd$A+dsis"
+jgd+dsis
+ohladkov@c4c4c1:~$ echo -n "jgd$Adsis"
+jgdohladkov@c4c4c1:~$ echo "jgd$Adsis"
+jgd
+ohladkov@c4c4c1:~$ 
+*/
+
+// pwd (Prints current working directory | no parameters | getcwd)
+
+
