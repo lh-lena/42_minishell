@@ -7,7 +7,7 @@ void	create_history(t_data *data)
 {
 	const char	*str;
 
-	str = data->prompt;
+	str = data->input;
 	if (str)
 		add_history(str);
 }

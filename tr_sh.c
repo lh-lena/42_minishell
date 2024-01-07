@@ -39,7 +39,7 @@ https://dev.to/harshbanthiya/writing-my-own-minimal-shell-in-c-part-3-the-parsin
 	Stage 2: Syntactic Analysis
 	Stage 3: Handling Executable Binary Commands
 	Stage 4: Handling Shell Built-In Commands
-	Handling Handle environment variables
+			+ Handling Handle environment variables
 	Stage 5: Handling Redirection
 	Stage 6: Handling Signals
 	Error Handling
@@ -48,43 +48,7 @@ https://dev.to/harshbanthiya/writing-my-own-minimal-shell-in-c-part-3-the-parsin
 	Parsing a command line
 	Building a tree
 */
-
 #include "sh.h"
-
-void	dir_tr(t_data *data);
-void	execve_tr(t_data *data);
-
-void	print_arr(char **arr)
-{
-	int i = 0;
-	while (arr[i])
-	{
-		printf("%d = %s\n", i, arr[i]);
-		i++;
-	}
-}
-
-size_t	ft_arrsize(char	**arr)
-{
-	size_t	size;
-
-	size = 0;
-	while (arr[size])
-		size++;
-	return (size);
-}
-
-void	check_cmd(t_data *input)
-{
-	if (ft_strncmp(input->argv[0], "cd", 2) == 0)
-		dir_tr(input);
-	else if(ft_strncmp(input->argv[0], "env", 3) == 0)
-		env_tr(input);
-	else
-		execve_tr(input);
-}
-// else if (ft_strncmp(input->argv[0], "export", 3) == 0)
-		// export(input);
 
 void	dir_tr(t_data *data)
 {
@@ -93,17 +57,6 @@ void	dir_tr(t_data *data)
 	chdir(data->argv[1]);
 	data->pwd = getcwd(NULL, 0);
 	printf("pwd to given directory = %s\n", data->pwd);
-}
-
-void	parse_input(t_data	*input)
-{
-	char	**arr;
-
-	arr = ft_split(input->prompt, ' ');
-	if (!arr)
-		perror("malloc\n");
-	input->argv = arr;
-	check_cmd(input);
 }
 
 void	execve_tr(t_data *data)
@@ -116,7 +69,7 @@ void	execve_tr(t_data *data)
 		exit(EXIT_FAILURE);
 	if (pid == 0)
 	{
-		val = execve(data->argv[0], data->argv, NULL);
+		val = execve(data->argv[0], data->argv, data->envp);
 		if (val == -1)
 			perror("Error execve()\n");
 	}
@@ -124,51 +77,6 @@ void	execve_tr(t_data *data)
 		wait(NULL);
 }
 
-void	print_new_prompt(void)
-{
-	rl_on_new_line();
-	// rl_replace_line("", 0);
-	rl_redisplay();
-}
-
-
-void	minishell(t_data *data)
-{
-	while (1)
-	{
-		data->prompt = readline("sh$ ");
-		if (!data->prompt)
-		{
-			ft_putendl_fd("exit prompt", 2);
-			exit(1);
-		}
-		else
-		{
-			if (is_exit(data->prompt))
-				exit_handler();
-			create_history(data);
-			parse_input(data);
-		}
-	}
-}
-
-int main(int ac, char **av, char **envp)
-{
-	(void)ac;
-	(void)av;
-	// manage_signal();
-	// determines if file descriptor is associated with a terminal
-	if (isatty(STDIN_FILENO) == 1)
-	{
-		t_data *data;
-		data = (t_data *)malloc(sizeof(t_data));
-		data->envp = envp;
-		minishell(data);
-		if (data)
-			free(data);
-	}
-	return (0);
-}
 
 
 /*

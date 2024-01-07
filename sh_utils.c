@@ -14,3 +14,10 @@ int	fork1(void)
 		panic("fork\n");
 	return (pid);
 }
+
+void	ft_print_new_prompt(void)
+{
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
+}

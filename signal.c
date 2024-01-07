@@ -15,6 +15,16 @@ and the process group identifier (PGID) of all the processes associated with
 our shell with the ps command:
 	ps -eo "%c: [PID = %p] [PPID = %P] [PGID = %r]" | grep $$
 */
+
+/*
+Handle ctrl-C, ctrl-D and ctrl-\ which should behave like in bash.
+
+• In interactive mode:
+◦ ctrl-C displays a new prompt on a new line. // print "^C" // exit_status = 130
+◦ ctrl-D exits the shell. // print "exit"                   // exit_status = 0
+◦ ctrl-\ does nothing.                                      // exit_status = 0
+*/
+
 #include "sh.h"
 
 // static void	handler_sig_quit(int sig)
@@ -39,30 +49,7 @@ our shell with the ps command:
 // 3. ignore "Ctrl-\"
 // void	manage_signal(void)
 // {
-// 	signal(SIGINT, handler_sig_quit);
+// 	signal(SIGINT, handle_signal);
 // 	signal(SIGTSTP, SIG_IGN);
 // 	signal(SIGQUIT, SIG_IGN);
-// }
-
-// static void	handle_signal(int signal, siginfo_t *info, void *context)
-// {
-// 	printf("Stop not allowed\n");
-// }
-
-// void	signals(void)
-// {
-// 	struct sigaction	sig_action;
-
-
-// not finished
-// 	sig_action.sa_sigaction = handle_signal;
-// 	sig_action.sa_flags = SA_RESTART | SA_SIGINFO;
-// 	sigemptyset(&sig_action.sa_mask);
-// 	// if we had another sigaction set beforhand it would save in the third parametr
-// 	if (sigaction(SIGINT, &sig_action, 0) == -1)
-// 		perror("Error sigaction");
-// 	if (sigaction(SIGQUIT, &sig_action, 0) == -1)
-// 		perror("Error sigaction");
-// 	if (sigaction(0, &sig_action, 0) == -1)
-// 		perror("Error sigaction");
 // }

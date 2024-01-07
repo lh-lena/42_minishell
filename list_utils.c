@@ -1,6 +1,6 @@
 #include "sh.h"
 
-t_env	*ft_lstnew(char	*str)
+t_env	*ft_new_node_env(char *str)
 {
 	t_env	*temp;
 	char	**arr;
@@ -9,14 +9,22 @@ t_env	*ft_lstnew(char	*str)
 	if (!temp)
 		perror("malloc");
 	arr = ft_split(str, '=');
-	temp->name = arr[0];
-	temp->value = arr[1];
+	if (!arr)
+		perror("malloc");
+	temp->name = (char *)ft_calloc(ft_strlen(arr[0]) + 1, 1);
+	if (!temp->name)
+		perror("malloc");
+	ft_strlcpy(temp->name, arr[0], ft_strlen(arr[0]));
+	temp->value = (char *)ft_calloc(ft_strlen(arr[1]) + 1, 1);
+	if (!temp->value)
+		perror("malloc");
+	ft_strlcpy(temp->value, arr[1], ft_strlen(arr[1]));
 	temp->next = NULL;
-	free(arr);
+	ft_free_arr(arr);
 	return (temp);
 }
 
-void	ft_lstadd_back(t_env **lst, t_env *new)
+void	ft_lstadd_back_env(t_env **lst, t_env *new)
 {
 	t_env	*cur;
 
@@ -33,41 +41,7 @@ void	ft_lstadd_back(t_env **lst, t_env *new)
 	cur->next = new;
 }
 
-void	ft_free_node(t_env *node)
-{
-	free(node->name);
-	free(node->value);
-	free(node);
-}
-
-// didn't test it
-// cases:
-// if del(node == first) -> lst = first->next
-// change from t_env *del to name
-void	ft_delnode(t_env **lst, char *name)
-{
-	t_env	*cur;
-	t_env	*del;
-
-	if (lst == NULL || name == NULL)
-		return ;
-	cur = *lst;
-	if (cur->name == name)
-	{
-		del = cur;
-		cur = cur->next;
-	}
-	else
-	{
-		while (cur->next->name != name)
-			cur = cur->next;
-		del = cur->next;
-		cur->next = cur->next->next;
-	}
-	ft_free_node(del);
-}
-
-size_t	ft_lstsize(t_env *lst)
+size_t	ft_lstsize_env(t_env *lst)
 {
 	t_env	*temp;
 	size_t	i;
@@ -84,14 +58,14 @@ size_t	ft_lstsize(t_env *lst)
 	return (i);
 }
 
-void	print_lst(t_env *lst)
+void	ft_print_lst_env(t_env *lst)
 {
 	t_env	*temp;
 	size_t	size;
 	size_t	i;
 
 	temp = lst;
-	size = ft_lstsize(lst);
+	size = ft_lstsize_env(lst);
 	i = 0;
 	while (i < size)
 	{
@@ -102,6 +76,7 @@ void	print_lst(t_env *lst)
 		temp = temp->next;
 		i++;
 	}
+	// to del
 	if (!lst)
 		printf("lst = NULL\n");
 }
