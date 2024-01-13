@@ -30,6 +30,7 @@ void	ft_free_node_env(t_env *node)
 		free(node->value);
 	if (node)
 		free(node);
+	node = NULL;
 }
 
 void	ft_free_lst_env(t_env *lst)
@@ -59,14 +60,14 @@ void	ft_delnode_env(t_env **lst, char *name)
 	if (lst == NULL || name == NULL)
 		return ;
 	cur = *lst;
-	if (cur->name == name)
+	if (ft_strncmp(cur->name, name, ft_strlen(name)) == 0)
 	{
 		del = cur;
 		cur = cur->next;
 	}
 	else
 	{
-		while (cur->next->name != name)
+		while (ft_strncmp(cur->next->name, name, ft_strlen(name)) == 0)
 			cur = cur->next;
 		del = cur->next;
 		cur->next = cur->next->next;

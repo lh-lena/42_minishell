@@ -31,6 +31,8 @@ size_t	ft_strlen(const char *s)
 {
 	size_t	len;
 
+	if (s == NULL)
+		return (0);
 	len = 0;
 	while (s[len])
 		len++;
@@ -95,13 +97,17 @@ void	ft_bzero(void *s, size_t n)
 
 void	*ft_calloc(size_t nitems, size_t size)
 {
-	void	*p;
+	unsigned char	*ptr;
+	size_t			len;
 
-	p = (void *)malloc(nitems * size);
-	if (p == NULL)
+	len = nitems * size;
+	if (2147483647 < size * nitems)
 		return (NULL);
-	ft_bzero(p, (nitems * size));
-	return (p);
+	ptr = (unsigned char *)malloc((len));
+	if (!ptr)
+		return (NULL);
+	ft_bzero(ptr, len);
+	return (ptr);
 }
 
 int	ft_atoi(const char *nptr)
@@ -153,4 +159,15 @@ int	ft_isascii(int c)
 	if (c < 0 || c > 127)
 		return (0);
 	return (1);
+}
+
+char	*ft_strchr(const char *s, int c)
+{
+	while ((char)c != *s)
+	{
+		if (!*s)
+			return (0);
+		s++;
+	}
+	return ((char *)s);
 }

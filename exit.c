@@ -3,8 +3,8 @@
 
 #include "sh.h"
 
-// TODO: exit with numerical option 
-// in process
+static int	ft_calc_exit_status(char *str);
+
 int	is_exit(t_data *data)
 {
 	char	**arr;
@@ -16,19 +16,16 @@ int	is_exit(t_data *data)
 		perror("malloc");
 	size = ft_arrsize(arr);
 	i = 0;
-	if (ft_strncmp(arr[0], "exit", ft_strlen(arr[0])) == 0)
+	if (ft_strncmp(arr[0], "exit", ft_strlen(arr[0])) == 0) // delete
 	{
 		i = 1;
 		if (size == 2)
 		{
 			if (ft_isdigit_str(arr[1]))
-			{
-				data->exit_status = ft_atoi(arr[1]);
-				if (data->exit_status <= -1 || data->exit_status >= 256) //doesn't work so far
-					data->exit_status = data->exit_status % 256;
-			}
+				data->exit_status = ft_calc_exit_status(arr[1]);
 			else
 			{
+				i = 1;
 				data->exit_status = 2;
 				printf("exit\nbash: exit: %s: numeric argument required\n", arr[1]);
 				ft_free_arr(arr); // exit for real
@@ -44,11 +41,21 @@ int	is_exit(t_data *data)
 	else
 	{
 		i = 0;
-		data->exit_status = 127;
-		printf("%s: command not found\n", arr[0]);
+		// data->exit_status = 127;
+		// printf("%s: command not found\n", arr[0]);
 	}
 	ft_free_arr(arr);
 	return (i);
+}
+
+static int	ft_calc_exit_status(char *str)
+{
+	int	code;
+
+	code = ft_atoi(str) % 256;
+	if (code < 0)
+		code += 256;
+	return (code);
 }
 
 void	exit_handler(t_data *data) // ok so far

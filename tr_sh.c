@@ -48,6 +48,7 @@ https://dev.to/harshbanthiya/writing-my-own-minimal-shell-in-c-part-3-the-parsin
 	Parsing a command line
 	Building a tree
 */
+
 #include "sh.h"
 
 void	dir_tr(t_data *data)
@@ -76,8 +77,6 @@ void	execve_tr(t_data *data)
 	else
 		wait(NULL);
 }
-
-
 
 /*
 Allowed func-s:

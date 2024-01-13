@@ -52,11 +52,14 @@ int		ft_isalnum(int c);
 int		ft_isalpha(int c);
 int		ft_isdigit(int c);
 int		ft_isascii(int c);
+char	*ft_strchr(const char *s, int c);
 
 // str_utils
 int		ft_isspace(int c);
 int		ft_issign(int c);
 int		ft_isdigit_str(char *s);
+char	*ft_substr(char *s, unsigned int start, size_t len);
+
 
 // arr_utils
 size_t	ft_arrsize(char	**arr);
@@ -74,7 +77,7 @@ t_env	*ft_new_node_env(char	*str);
 void	ft_lstadd_back_env(t_env **lst, t_env *new);
 void	ft_delnode_env(t_env **lst, char *name);
 size_t	ft_lstsize_env(t_env *lst);
-void	ft_print_lst_env(t_env *lst);
+void	ft_print_lst_env(t_env **lst);
 void	ft_free_lst_env(t_env *lst);
 void	ft_free_node_env(t_env *node);
 
@@ -84,17 +87,14 @@ void	ft_free_data(t_data	*data);
 void	panic(char	*s);
 void	ft_print_new_prompt(void);
 
-
 // ececute
 void	execve_tr(t_data *data);
 
-// -- handle_builtins --
+// -- handle_builtins -- 
 // history
 void	create_history(t_data *data);
 
 // input
-void	parse_input(t_data	*input);
-void	check_cmd(t_data *input);
 
 // cd (Changes current working directory, updating PWD and OLDPWD | chdir)
 void	dir_tr(t_data *data);
@@ -102,6 +102,11 @@ void	dir_tr(t_data *data);
 // echo -n (Prints arguments separated with a space followed by a new line| -n | write)
 
 // export (Adds/replaces variable in environment)
+void	export(t_data *data, char **input);
+int		isvalid_export_input(char *str);
+int		isvalid_var_name_str(char *str);
+int 	isvalid_var_name_char(int c);
+int		export_execution(t_data *data, char *input);
 
 // pwd (Prints current working directory | no parameters | getcwd)
 
@@ -109,8 +114,10 @@ void	dir_tr(t_data *data);
 void	env_print(t_data *data);
 t_env	*ft_getenv(char **envp);
 int		env_update_val(t_env *envp, char *name, char *value);
+int		env_isvar_name(t_env *envp, char *name);
 
 // unset (Removes variable from environment | $VAR)
+void	unset(t_data *data, char **input);
 
 // exit
 int		is_exit(t_data *data);

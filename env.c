@@ -26,6 +26,21 @@ t_env *ft_getenv(char **envp)
 	return (env);
 }
 
+// if there is var in the envp, return len of its value, otherwise 0
+int	env_isvar_name(t_env *envp, char *name)
+{
+	t_env	*temp;
+
+	temp = envp;
+	while (temp != NULL)
+	{
+		if (ft_strncmp(temp->name, name, ft_strlen(name)) == 0)
+			return (ft_strlen(temp->value));
+		temp = temp->next;
+	}
+	return (0);
+}
+
 // to update a value existed variable, if no one found return 0
 int	env_update_val(t_env *envp, char *name, char *value)
 {
@@ -34,7 +49,7 @@ int	env_update_val(t_env *envp, char *name, char *value)
 		if (ft_strncmp(envp->name, name, ft_strlen(name)) == 0)
 		{
 			free(envp->value);
-			envp->value = (char *)ft_calloc(ft_strlen(value) + 1, 1);
+			envp->value = (char *)ft_calloc(ft_strlen(value) + 1, sizeof(char));
 			ft_strlcpy(envp->value, value, ft_strlen(value));
 			return (1);
 		}
@@ -45,7 +60,7 @@ int	env_update_val(t_env *envp, char *name, char *value)
 
 void	env_print(t_data *data)
 {
-	ft_print_lst_env(data->env_lst);
+	ft_print_lst_env(&data->env_lst);
 }
 
 /*
@@ -61,4 +76,10 @@ ohladkov@c4b7c6:~/Documents/minishell$ ls
 ohladkov@c4b7c6:~/Documents/minishell$ echo $_
 ls
 
+*/
+
+
+/* 
+manipulate env:
+- 
 */
