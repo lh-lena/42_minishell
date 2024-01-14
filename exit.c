@@ -4,6 +4,53 @@
 #include "sh.h"
 
 static int	ft_calc_exit_status(char *str);
+// static int	check_exit_arg(t_data *data, char *str);
+
+// int	is_exit(t_data *data)
+// {
+// 	char	**arr;
+// 	int		size;
+// 	int		i;
+
+// 	arr = ft_split(data->input, ' ');
+// 	if (!arr)
+// 		perror("malloc");
+// 	size = ft_arrsize(arr);
+// 	i = 0;
+// 	if (ft_strncmp(arr[0], "exit", ft_strlen(arr[0])) == 0) // delete
+// 	{
+// 		i = 1;
+// 		if (size == 2)
+// 			i = check_exit_arg(data, arr[1]);
+// 		else if (size > 2)
+// 		{
+// 			i = 0;
+// 			data->exit_status = 1;
+// 			printf("exit\nbash: exit: too many arguments\n"); // doesn't exit for real
+// 		}
+// 	}
+// 	else
+// 		i = 0;
+// 	ft_free_arr(arr);
+// 	return (i);
+// }
+
+// static int	check_exit_arg(t_data *data, char *str)
+// {
+// 	int	i;
+
+// 	i = 1;
+// 	if (ft_isdigit_str(str))
+// 		data->exit_status = ft_calc_exit_status(str);
+// 	else
+// 	{
+// 		i = 1;
+// 		data->exit_status = 2;
+// 		printf("exit\nbash: exit: %s: numeric argument required\n", str);
+// 	}
+// 	return (i);
+// }
+
 
 int	is_exit(t_data *data)
 {
@@ -28,7 +75,7 @@ int	is_exit(t_data *data)
 				i = 1;
 				data->exit_status = 2;
 				printf("exit\nbash: exit: %s: numeric argument required\n", arr[1]);
-				ft_free_arr(arr); // exit for real
+				// ft_free_arr(arr); // exit for real
 			}
 		}
 		else if (size > 2)
@@ -63,7 +110,7 @@ void	exit_handler(t_data *data) // ok so far
 	int		er_num;
 
 	er_num = data->exit_status;
-	rl_clear_history();
+	// rl_clear_history();
 	if (data)
 		ft_free_data(data);
 	ft_putendl_fd("exit", 1); // or 1 ??

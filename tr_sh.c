@@ -51,15 +51,6 @@ https://dev.to/harshbanthiya/writing-my-own-minimal-shell-in-c-part-3-the-parsin
 
 #include "sh.h"
 
-void	dir_tr(t_data *data)
-{
-	data->pwd = getcwd(NULL, 0);
-	printf("first pwd = %s\n", data->pwd);
-	chdir(data->argv[1]);
-	data->pwd = getcwd(NULL, 0);
-	printf("pwd to given directory = %s\n", data->pwd);
-}
-
 void	execve_tr(t_data *data)
 {
 	pid_t	pid;

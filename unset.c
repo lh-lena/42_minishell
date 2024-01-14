@@ -2,7 +2,7 @@
 #include "sh.h"
 
 //    input[0]  [1]  [2]
-// input: var1 var2 var3
+// unset var1 var2 var3
 void	unset(t_data *data, char **input)
 {
 	int		i;
@@ -17,3 +17,10 @@ void	unset(t_data *data, char **input)
 			perror("var_name not found"); // delete
 	}
 }
+
+/*
+https://www.ibm.com/docs/en/zos/2.2.0?topic=descriptions-unset-unset-values-attributes-variables-functions
+0 - Successful completion
+1 - Failure due to an incorrect command-line option
+2 - Failure due to an incorrect command-line argument
+*/

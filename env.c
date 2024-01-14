@@ -27,7 +27,7 @@ t_env *ft_getenv(char **envp)
 }
 
 // if there is var in the envp, return len of its value, otherwise 0
-int	env_isvar_name(t_env *envp, char *name)
+size_t	env_isvar_name(t_env *envp, char *name)
 {
 	t_env	*temp;
 
@@ -58,9 +58,23 @@ int	env_update_val(t_env *envp, char *name, char *value)
 	return (0);
 }
 
+char	*env_get_var_value(t_env *envp, char *name)
+{
+	t_env	*temp;
+
+	temp = envp;
+	while (temp != NULL)
+	{
+		if (ft_strncmp(temp->name, name, ft_strlen(name)) == 0)
+			return (temp->value);
+		temp = temp->next;
+	}
+	return (NULL);
+}
+
 void	env_print(t_data *data)
 {
-	ft_print_lst_env(&data->env_lst);
+	ft_print_lst_env(&data->env_lst, 0);
 }
 
 /*

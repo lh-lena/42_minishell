@@ -46,7 +46,6 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 	i = 0;
 	if (size != 0)
 	{
-		// while ((src[i] != '\0') && (i < (size - 1)))
 		while ((src[i] != '\0') && (i < (size)))
 		{
 			dst[i] = src[i];
@@ -56,6 +55,7 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 	}
 	return (ft_strlen(src));
 }
+
 
 size_t	ft_strlcat(char *dst, const char *src, size_t size)
 {
@@ -161,13 +161,18 @@ int	ft_isascii(int c)
 	return (1);
 }
 
-char	*ft_strchr(const char *s, int c)
+char	*ft_strrchr(const char *s, int c)
 {
-	while ((char)c != *s)
+	int	i;
+
+	i = 0;
+	while (s[i])
+		i++;
+	while (i >= 0)
 	{
-		if (!*s)
-			return (0);
-		s++;
+		if (s[i] == (char) c)
+			return ((char *)(s + i));
+		i--;
 	}
-	return ((char *)s);
+	return (NULL);
 }

@@ -6,7 +6,7 @@
 /*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/06 14:54:05 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/01/12 00:07:23 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/01/14 23:04:54 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 		return (malloc(1));
 	if (len > ft_strlen(s + start))
 		len = ft_strlen(s + start);
-	str = (char *)malloc(sizeof(char) * (len + 1));
+	str = (char *)ft_calloc((len + 1),sizeof(char));
 	if (!str)
 		return (NULL);
 	i = 0;
@@ -75,3 +75,16 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 	str[i] = '\0';
 	return (str);
 }
+
+void	str_copy(char *s1, char *s2)
+{
+	if (!s2 || *s2 == '\0')
+		return ;
+	while (*s2)
+	{
+		*s1 = *s2;
+		s1++;
+		s2++;
+	}
+}
+

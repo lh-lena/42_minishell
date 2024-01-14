@@ -61,7 +61,8 @@ size_t	ft_lstsize_env(t_env *lst)
 	return (i);
 }
 
-void	ft_print_lst_env(t_env **lst)
+// indicate arg = 1 for export no arguments
+void	ft_print_lst_env(t_env **lst, int arg)
 {
 	t_env	*temp;
 	size_t	size;
@@ -72,6 +73,8 @@ void	ft_print_lst_env(t_env **lst)
 	i = 0;
 	while (i < size)
 	{
+		if (arg == 1)
+			ft_putstr_fd("declare -x ", 1);
 		ft_putstr_fd(temp->name, 1);
 		ft_putchar_fd('=', 1);
 		ft_putstr_fd(temp->value, 1);

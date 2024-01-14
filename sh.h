@@ -53,16 +53,18 @@ int		ft_isalpha(int c);
 int		ft_isdigit(int c);
 int		ft_isascii(int c);
 char	*ft_strchr(const char *s, int c);
+char	*ft_strrchr(const char *s, int c);
 
 // str_utils
 int		ft_isspace(int c);
 int		ft_issign(int c);
 int		ft_isdigit_str(char *s);
 char	*ft_substr(char *s, unsigned int start, size_t len);
-
+void	str_copy(char *s1, char *s2);
 
 // arr_utils
 size_t	ft_arrsize(char	**arr);
+size_t	ft_arrlen(char **arr);
 void	print_arr(char **arr);
 void	ft_free_arr(char **arr);
 
@@ -77,17 +79,18 @@ t_env	*ft_new_node_env(char	*str);
 void	ft_lstadd_back_env(t_env **lst, t_env *new);
 void	ft_delnode_env(t_env **lst, char *name);
 size_t	ft_lstsize_env(t_env *lst);
-void	ft_print_lst_env(t_env **lst);
+void	ft_print_lst_env(t_env **lst, int arg);
 void	ft_free_lst_env(t_env *lst);
 void	ft_free_node_env(t_env *node);
 
+// free
 void	ft_free_data(t_data	*data);
 
 // sh_utils
 void	panic(char	*s);
 void	ft_print_new_prompt(void);
 
-// ececute
+// execute
 void	execve_tr(t_data *data);
 
 // -- handle_builtins -- 
@@ -97,16 +100,27 @@ void	create_history(t_data *data);
 // input
 
 // cd (Changes current working directory, updating PWD and OLDPWD | chdir)
-void	dir_tr(t_data *data);
+void	cd(t_data *data, char **arg);
 
 // echo -n (Prints arguments separated with a space followed by a new line| -n | write)
 
 // export (Adds/replaces variable in environment)
+int		is_quotes(char *value);
 void	export(t_data *data, char **input);
+int		export_execution(t_data *data, char *input);
+char	*get_replaced_str(t_env *envp, char *s);
+char	*replace_var_value(t_env *envp, char *s, char **var_names, size_t value_len);
+void	replace_str(char *new, t_env *envp, char *s, char **var_names);
+char	*env_get_var_value(t_env *envp, char *name);
+void	env_replace_or_create_node(t_env *envp, char *input);
+
+char	**get_var_name_arr(char *s, char c);
+
+// export_utils
 int		isvalid_export_input(char *str);
 int		isvalid_var_name_str(char *str);
 int 	isvalid_var_name_char(int c);
-int		export_execution(t_data *data, char *input);
+
 
 // pwd (Prints current working directory | no parameters | getcwd)
 
@@ -114,7 +128,7 @@ int		export_execution(t_data *data, char *input);
 void	env_print(t_data *data);
 t_env	*ft_getenv(char **envp);
 int		env_update_val(t_env *envp, char *name, char *value);
-int		env_isvar_name(t_env *envp, char *name);
+size_t	env_isvar_name(t_env *envp, char *name);
 
 // unset (Removes variable from environment | $VAR)
 void	unset(t_data *data, char **input);

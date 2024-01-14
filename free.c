@@ -47,7 +47,6 @@ void	ft_free_lst_env(t_env *lst)
 	}
 }
 
-
 // didn't test it
 // cases:
 // if del(node == first) -> lst = first->next
@@ -55,24 +54,29 @@ void	ft_free_lst_env(t_env *lst)
 void	ft_delnode_env(t_env **lst, char *name)
 {
 	t_env	*cur;
-	t_env	*del;
+	t_env	*prev;
 
-	if (lst == NULL || name == NULL)
+	if (lst == NULL || *lst == NULL || name == NULL)
 		return ;
 	cur = *lst;
-	if (ft_strncmp(cur->name, name, ft_strlen(name)) == 0)
+	prev = NULL;
+
+	if (strcmp(cur->name, name) == 0)
+    {
+        *lst = cur->next;
+        ft_free_node_env(cur);
+        return ;
+    }
+	while (cur != NULL && (ft_strncmp(cur->name, name, ft_strlen(name)) != 0))
 	{
-		del = cur;
+		prev = cur;
 		cur = cur->next;
 	}
-	else
-	{
-		while (ft_strncmp(cur->next->name, name, ft_strlen(name)) == 0)
-			cur = cur->next;
-		del = cur->next;
-		cur->next = cur->next->next;
-	}
-	ft_free_node_env(del);
+	if (cur == NULL)
+		return ;
+	prev->next = cur->next;
+	printf("node to delete -> %s=%s\n", cur->name, cur->value); // delete
+	ft_free_node_env(cur);
 }
 
 void	ft_free_arr(char **arr)
@@ -81,13 +85,19 @@ void	ft_free_arr(char **arr)
     int		i;
 
 	i = 0;
-	temp = arr;
-	while (temp[i])
+	if (arr != NULL)
 	{
-		free(temp[i]);
-		temp[i] = NULL;
-		i++;
+		temp = arr;
+		while (temp[i])
+		{
+			if (temp[i])
+			{
+				free(temp[i]);
+				temp[i] = NULL;
+			}
+			i++;
+		}
+		free(temp);
+		temp = NULL;
 	}
-	free(temp);
-	temp = NULL;
 }

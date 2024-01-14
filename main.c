@@ -5,7 +5,7 @@
 static void	check_cmd(t_data *input, char **arr)
 {
 	if (ft_strncmp(arr[0], "cd", ft_strlen(arr[0])) == 0)
-		dir_tr(input);
+		cd(input, arr);
 	else if (ft_strncmp(arr[0], "exit", ft_strlen(arr[0])) == 0)
 	{
 		if (is_exit(input))
@@ -23,15 +23,12 @@ static void	check_cmd(t_data *input, char **arr)
 
 static void	parse_input(t_data	*input)
 {
-	char	**arr;
-
 	if (input->argv != NULL)
 		ft_free_arr(input->argv);
-	arr = ft_split(input->input, ' ');
-	if (!arr)
+	input->argv = ft_split(input->input, ' '); //malloc
+	if (!input->argv)
 		perror("malloc\n");
-	input->argv = arr;
-	check_cmd(input, arr);
+	check_cmd(input, input->argv);
 }
 
 void	init_data(t_data *data)
