@@ -28,10 +28,7 @@ char	*replace_var_value(t_env *envp, char *s, char **var_names, size_t value_len
 	size_t	names_len;
 
 	names_len = ft_arrlen(var_names) + ft_arrsize(var_names);
-	if (value_len)
-		len = ft_strlen(s) - names_len + value_len;
-	else
-		len = ft_strlen(s) - names_len;
+	len = ft_strlen(s) - names_len + value_len;
 	new = (char *)ft_calloc(len + 1, sizeof(char));// malloc
 	if (!new)
 		perror("malloc");
@@ -42,22 +39,22 @@ char	*replace_var_value(t_env *envp, char *s, char **var_names, size_t value_len
 // to set allocated empty 'new' with replaced var's value
 void	replace_str(char *new, t_env *envp, char *s, char **var_names)
 {
-	int		v;
+	int		i;
 
-	v = 0;
+	i = 0;
 	while (*s != '\0')
 	{
 		if (*s == '$' && (isvalid_var_name_char(*(s + 1))))
 		{
 			s++;
-			if (env_isvar_name(envp, var_names[v]))
+			if (env_isvar_name(envp, var_names[i]))
 			{
-				str_copy(new, env_get_var_value(envp, var_names[v]));
-				new = new + ft_strlen(env_get_var_value(envp, var_names[v]));
+				str_copy(new, env_get_var_value(envp, var_names[i]));
+				new = new + ft_strlen(env_get_var_value(envp, var_names[i]));
 			}
 			while (isvalid_var_name_char(*s) && *s != '\0')
 				s++;
-			v++;
+			i++;
 		}
 		else
 		{

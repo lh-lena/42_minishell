@@ -8,9 +8,9 @@
 # include <sys/wait.h> // wait waitpid wait3 wait4
 # include <signal.h> // signal kill 
 # include <sys/stat.h> // stat lstat fstat 
-# include <dirent.h> // opendir readdir closedir
-# include <string.h> // strerror
-# include <errno.h> // errno
+# include <dirent.h> // opendir readdir closedir 
+# include <string.h> // strerror 
+# include <errno.h> // errno 
 # include <term.h> // termcap 
 # include <readline/readline.h> // readline 
 # include <readline/history.h>
@@ -31,7 +31,6 @@ typedef struct s_env
 typedef struct s_data
 {
 	char 	*input; // readed prompt line
-	char 	*pwd; // cur path
 	char	**argv; // split input (malloc)
 	int		exit_status;
 	char	**envp;
@@ -99,15 +98,15 @@ void	create_history(t_data *data);
 
 // input
 
-// cd (Changes current working directory, updating PWD and OLDPWD | chdir)
-void	cd(t_data *data, char **arg);
+// cd_cmd (Changes current working directory, updating PWD and OLDPWD | chdir)
+void	cd_cmd(t_data *data, char **arg);
 
 // echo -n (Prints arguments separated with a space followed by a new line| -n | write)
 
 // export (Adds/replaces variable in environment)
 int		is_quotes(char *value);
 void	export(t_data *data, char **input);
-int		export_execution(t_data *data, char *input);
+char	*export_execution(t_data *data, char *input);
 char	*get_replaced_str(t_env *envp, char *s);
 char	*replace_var_value(t_env *envp, char *s, char **var_names, size_t value_len);
 void	replace_str(char *new, t_env *envp, char *s, char **var_names);
@@ -115,14 +114,15 @@ char	*env_get_var_value(t_env *envp, char *name);
 void	env_replace_or_create_node(t_env *envp, char *input);
 
 char	**get_var_name_arr(char *s, char c);
+char	**var_split(char *s, char c);
 
 // export_utils
 int		isvalid_export_input(char *str);
 int		isvalid_var_name_str(char *str);
-int 	isvalid_var_name_char(int c);
-
+int		isvalid_var_name_char(int c);
 
 // pwd (Prints current working directory | no parameters | getcwd)
+void	pwd_cmd(t_data *data);
 
 // env (Prints environment | write)
 void	env_print(t_data *data);

@@ -1,11 +1,13 @@
 #include "sh.h"
 
 // to change ->
-// if (ft_strncmp(input->argv[0], "cd", 2) == 0) -> if (ft_strncmp(input->argv[0], 'cd', ft_strlen(argv[0])) == 0)
+// if (ft_strncmp(input->argv[0], "cd_cmd", 2) == 0) -> if (ft_strncmp(input->argv[0], 'cd_cmd', ft_strlen(argv[0])) == 0)
 static void	check_cmd(t_data *input, char **arr)
 {
-	if (ft_strncmp(arr[0], "cd", ft_strlen(arr[0])) == 0)
-		cd(input, arr);
+	if (ft_strncmp(arr[0], "cd_cmd", ft_strlen(arr[0])) == 0)
+		cd_cmd(input, arr);
+	else if (ft_strncmp(arr[0], "pwd", ft_strlen(arr[0])) == 0)
+		pwd_cmd(input);
 	else if (ft_strncmp(arr[0], "exit", ft_strlen(arr[0])) == 0)
 	{
 		if (is_exit(input))
@@ -19,15 +21,19 @@ static void	check_cmd(t_data *input, char **arr)
 		unset(input, arr);
 	else
 		execve_tr(input);
+	if (arr != NULL)
+		ft_free_arr(arr);
 }
 
 static void	parse_input(t_data	*input)
 {
-	if (input->argv != NULL)
-		ft_free_arr(input->argv);
+	// if (input->argv != NULL)
+	// 	ft_free_arr(input->argv);
 	input->argv = ft_split(input->input, ' '); //malloc
 	if (!input->argv)
 		perror("malloc\n");
+	// free(input->input);
+	// input->input = NULL;
 	check_cmd(input, input->argv);
 }
 

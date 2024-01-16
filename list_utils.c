@@ -11,7 +11,7 @@ t_env	*ft_new_node_env(char *str)
 		perror("malloc");
 		return (0);
 	}
-	arr = ft_split(str, '=');
+	arr = var_split(str, '=');
 	if (!arr)
 		perror("malloc");
 	temp->name = (char *)ft_calloc(ft_strlen(arr[0]) + 1, 1);
@@ -68,13 +68,12 @@ void	ft_print_lst_env(t_env **lst, int arg)
 	size_t	size;
 	size_t	i;
 
+	(void)arg;
 	temp = *lst;
 	size = ft_lstsize_env(*lst);
 	i = 0;
 	while (i < size)
 	{
-		if (arg == 1)
-			ft_putstr_fd("declare -x ", 1);
 		ft_putstr_fd(temp->name, 1);
 		ft_putchar_fd('=', 1);
 		ft_putstr_fd(temp->value, 1);

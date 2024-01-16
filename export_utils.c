@@ -4,9 +4,11 @@ int	isvalid_export_input(char *str)
 {
 	char	**var_val;
 
+	if (!str)
+		return (0);
 	if (!ft_strchr(str, '='))
 		return (0);
-	var_val = ft_split(str, '='); // malloc
+	var_val = var_split(str, '='); // malloc
 	if (!var_val)
 		perror("malloc");
 	if (!isvalid_var_name_str(var_val[0]))
@@ -26,14 +28,14 @@ int	isvalid_var_name_str(char *str)
 	i = 0;
 	if (ft_isdigit(*str) || *str == '=')
 	{
-		printf("Error isvalid_var_name_str, start with digit\n");
+		printf("Error isvalid_var_name_str, start with digit\n"); // exit_st 1
 		return (0);
 	}
 	while (str[i])
 	{
 		if (!isvalid_var_name_char(str[i]))
 		{
-			printf("Error isvalid_var_name_str\n");
+			printf("Error isvalid_var_name_str\n"); //delete
 			return (0);
 		}
 		i++;
@@ -51,31 +53,36 @@ int isvalid_var_name_char(int c)
 	return (1);
 }
 
+
 // return 0 - if no quotes, -1 - if qouts don't close, 1 = ', 2 = "
 int	is_quotes(char *value)
 {
-	size_t	len;
 	int		i;
 	int		res;
 
 	i = -1;
-	len = ft_strlen(value);
 	res = 0;
-	while (++i < (int)len && value[i])
+	while (++i < (int)ft_strlen(value) && value[i])
 	{
-		if (value[i] == 39) // iteration ok?
+		if (value[i++] == 39) // iteration ok?
 		{
-			if (ft_strrchr(value, 39) && (ft_strchr(value, 39) != ft_strrchr(value, 39)))
-				res = 1;
-			else
-				return (-1);
+			res = 1;
+			while (value[i] != 39)
+			{	
+				if (value[i] == '\0')
+					return (-1);
+				i++;
+			}
 		}
-		else if (value[i] == 34)
+		else if (value[i++] == 34)
 		{
-			if (ft_strrchr(value, 34) && (ft_strchr(value, 34) != ft_strrchr(value, 34)))
-				res = 2;
-			else
-				return (-1);
+			res = 2;
+			while (value[i] != 34)
+			{	
+				if (value[i] == '\0')
+					return (-1);
+				i++;
+			}
 		}
 	}
 	return (res);

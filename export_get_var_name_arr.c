@@ -8,10 +8,7 @@ static unsigned int	ft_words(char *s, char c)
 	while (*s)
 	{
 		if (*s == c && isvalid_var_name_char(*(s + 1)))
-		{
 			nb++;
-			// s++;
-		}
 		s++;
 	}
 	return (nb);

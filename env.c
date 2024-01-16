@@ -58,6 +58,7 @@ int	env_update_val(t_env *envp, char *name, char *value)
 	return (0);
 }
 
+// return VAR's VALUE, if no found return NULL
 char	*env_get_var_value(t_env *envp, char *name)
 {
 	t_env	*temp;

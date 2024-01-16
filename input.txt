@@ -50,7 +50,7 @@ _=/usr/bin/env
 // $?
 print exit status
 
-// cd (Changes current working directory, updating PWD and OLDPWD | chdir)
+// cd_cmd (Changes current working directory, updating PWD and OLDPWD | chdir)
 
 // echo -n (Prints arguments separated with a space followed by a new line| -n | write)
 /*
@@ -61,9 +61,6 @@ jgdohladkov@c4c4c1:~$ echo "jgd$Adsis"
 jgd
 ohladkov@c4c4c1:~$ 
 */
-
-// pwd (Prints current working directory | no parameters | getcwd)
-
 
 TODO
 // function to change VAR to VAR if -> " and return string without ",
@@ -85,4 +82,64 @@ The distinction is that a direct leak is a block which has no pointers to it.
 An indirect leak is a block which is only pointed to by other leaked blocks. Both kinds of leak are bad.
 
 
+// void	pwd_cmd(t_data *data) 
+// {
+//     char *cur_dir;
+	
+// 	cur_dir = getcwd(NULL, 0);
+//     if (cur_dir != NULL)
+// 	{
+// 		data->exit_status = 0;
+//         printf("%s\n", cur_dir);
+//         free(cur_dir); // Free the memory allocated by getcwd
+//     } else
+//         perror("pwd");
+// }
 
+
+
+The functions you listed are system calls and library functions in C that are commonly used in building a shell like Minishell. Here's a brief explanation of how each of these functions is useful:
+
+1. **`getcwd`:**
+   - Used to get the current working directory. This is important for displaying the shell prompt and handling `cd_cmd` commands.
+
+2. **`chdir`:**
+   - Changes the current working directory. Essential for implementing the `cd_cmd` command.
+
+3. **`stat`, `lstat`, `fstat`:**
+   - Used to obtain information about files (e.g., permissions, size, etc.). Helpful for implementing features related to file information.
+
+4. **`unlink`:**
+   - Deletes a file. Useful for implementing the `rm` command.
+
+5. **`execve`:**
+   - Executes a program. Fundamental for running external commands and programs.
+
+6. **`dup`, `dup2`:**
+   - Duplicates file descriptors. Useful for implementing I/O redirection.
+
+7. **`pipe`:**
+   - Creates an inter-process communication pipe. Essential for implementing pipes in the shell.
+
+8. **`opendir`, `readdir`, `closedir`:**
+   - Used for directory handling. Important for implementing commands that involve directories, like `ls`.
+
+9. **`strerror`, `perror`:**
+   - Convert error number to string or print a description for the last error that occurred.
+
+10. **`isatty`, `ttyname`, `ttyslot`:**
+    - Terminal-related functions. Used for handling terminal I/O and checking if a file descriptor is associated with a terminal.
+
+11. **`ioctl`:**
+    - Used for controlling terminal devices. Important for terminal-related functionality.
+
+12. **`getenv`:**
+    - Retrieves the value of an environment variable. Useful for accessing environment variables.
+
+13. **`tcsetattr`, `tcgetattr`:**
+    - Terminal I/O functions. Used to get and set terminal attributes.
+
+14. **`tgetent`, `tgetflag`, `tgetnum`, `tgetstr`, `tgoto`, `tputs`:**
+    - Terminal-related functions from the termcap/terminfo library. Useful for handling terminal capabilities.
+
+These functions are the building blocks for implementing various features in a shell, including process execution, I/O redirection, command-line parsing, and interaction with the file system and terminal. Understanding and using these functions appropriately is crucial for developing a functional shell like Minishell.

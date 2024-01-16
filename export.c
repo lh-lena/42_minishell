@@ -6,59 +6,53 @@
 void	export(t_data *data, char **input)
 {
 	size_t	i;
+	char	*temp;
 
 	i = 0;
 	data->exit_status = 0;
-	if (ft_arrsize(input) == 1)
-		ft_print_lst_env(&data->env_lst, 1);
-	else
+	while (++i < ft_arrsize(input))
 	{
-		while (++i < ft_arrsize(input))
+		if (is_quotes(input[i]) == -1)
 		{
-			if (isvalid_export_input(input[i]))
+			data->exit_status = 5;
+			printf("bash: export: Quotes are not correctly closed\n");
+		}
+		else if (isvalid_export_input(input[i]))
+		{
+			temp = export_execution(data, input[i]);
+			if (temp != NULL)
 			{
-				data->exit_status = export_execution(data, input[i]);
-				if (data->exit_status == 5)
-					printf("bash: export: Quotes are not correctly closed\n");
+				free(input[i]);
+				input[i] = temp;
 			}
-			else if (!isvalid_export_input(input[i]))
-			{
-				data->exit_status = 1;
-				printf("bash: export: `%s': not a valid identifier\n", input[i]);
-			}
+			env_replace_or_create_node(data->env_lst, input[i]);
+		}
+		else if (!isvalid_export_input(input[i]))
+		{
+			data->exit_status = 1;
+			printf("bash: export: `%s': not a valid identifier\n", input[i]);
 		}
 	}
 }
 
-// return 5 - if quotes don't close, 
-int	export_execution(t_data *data, char *input)
+// return 5 - if quotes don't close
+char	*export_execution(t_data *data, char *input)
 {
 	char	*temp_new;
 
 	temp_new = NULL;
-	if (is_quotes(input) == -1)
-		return (5); // Quotes are not correctly closed
-	else if ((is_quotes(input) == 1))
+	if (is_quotes(input) == 1 || is_quotes(input) == 2)
 	{
-		printf("is_quotes(input) == 1\n");
-		return (0);
-	}
-	else if ((is_quotes(input) == 1))
-	{
-		printf("is_qoutes(input) == 2\n");
+		printf("is_quotes(input) == 2\n");
 		return (0);
 	}
 	else if (ft_strchr(input, '$'))
 	{
 		temp_new = get_replaced_str(data->env_lst, input); // malloc
-		if (temp_new != NULL)
-		{
-			// free(input); // causes double-free
-			input = temp_new;
-		}
+		if (!temp_new)
+			return (NULL);
 	}
-	env_replace_or_create_node(data->env_lst, input);
-	return (0);
+	return (temp_new);
 }
 
 void	env_replace_or_create_node(t_env *envp, char *input)
@@ -66,7 +60,7 @@ void	env_replace_or_create_node(t_env *envp, char *input)
 	char	**var_val;
 	t_env	*new;
 
-	var_val = ft_split(input, '=');
+	var_val = var_split(input, '=');
 	if (env_update_val(envp, var_val[0], var_val[1]))
 		ft_free_arr(var_val);
 	else
@@ -81,6 +75,19 @@ void	env_replace_or_create_node(t_env *envp, char *input)
 
 	// else if (is_quotes(input) == 1 || is_qoutes(input) == 2)
 	// 	temp_new = handle_qoutes(data->env_lst, input);
+
+/* 
+	else if (is_quotes(input) == 1)
+	{
+		printf("is_quotes(input) == 1\n");
+		return (0);
+	}
+	else if (is_quotes(input) == 2)
+	{
+		printf("is_qoutes(input) == 2\n");
+		return (0);
+	}
+ */
 
 // char	*handle_quotes(t_env *envp, char *input)
 // {

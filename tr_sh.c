@@ -13,7 +13,6 @@
 // https://explainshell.com/
 // https://github.com/achrafelkhnissi/minishell/tree/main 
 
-
 // parser
 // https://tomassetti.me/guide-parsing-algorithms-terminology/
 // https://www.youtube.com/watch?v=bxpc9Pp5pZM
@@ -58,12 +57,12 @@ void	execve_tr(t_data *data)
 
 	pid = fork();
 	if (pid == -1)
-		exit(EXIT_FAILURE);
+		perror("pid");
 	if (pid == 0)
 	{
 		val = execve(data->argv[0], data->argv, data->envp);
 		if (val == -1)
-			perror("Error execve()\n");
+			perror("bash: command not found");
 	}
 	else
 		wait(NULL);
@@ -133,8 +132,8 @@ ohladkov@c4c1c5:~/Documents/sh$ echo -e x\ty
 xty
 ohladkov@c4c1c5:~/Documents/sh$ echo -e "x\ty"
 x	y
-ohladkov@c4c1c5:~$ cd x
-bash: cd: x: No such file or directory
+ohladkov@c4c1c5:~$ cd_cmd x
+bash: cd_cmd: x: No such file or directory
 
 */
 

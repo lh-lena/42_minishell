@@ -6,7 +6,7 @@
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/14 14:34:10 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/01/07 15:36:50 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/01/16 12:15:01 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,6 @@ static char	*ft_strcpy(char const *str, char end)
 	while ((char)str[i] != end && (char)str[i] != '\0')
 		i++;
 	len = i;
-	// res = (char *)malloc(len + 1);
 	res = (char *)ft_calloc(len + 1, sizeof(char));
 	if (res == NULL)
 		return (res);
@@ -132,7 +131,6 @@ char	**ft_split(char const *s, char c)
 	unsigned int	n;
 
 	n = ft_count_words(s, c);
-	// res = (char **)malloc((n + 1) * sizeof(char *));
 	res = (char **)ft_calloc(n + 1, sizeof(char *));
 	if (res == NULL)
 		return (res);
