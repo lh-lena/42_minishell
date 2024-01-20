@@ -1,24 +1,36 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/20 13:37:24 by ohladkov          #+#    #+#             */
+/*   Updated: 2024/01/20 16:26:06 by ohladkov         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "sh.h"
 
 void	ft_free_data(t_data	*data)
 {
-	printf("data->env_lst = %p\n", data->env_lst);
+	printf("data->env_lst = %p\n", data->env_lst); // delete
 	if (data->env_lst)
 	{
 		ft_free_lst_env(data->env_lst);
-		ft_putendl_fd("free data->env_lst = OK", 1);
+		ft_putendl_fd("free data->env_lst = OK", 1); // delete
 	}
 	printf("data->argv = %p\n", data->argv);
 	if (data->argv)
 	{
 		ft_free_arr(data->argv);
-		ft_putendl_fd("free data->argv = OK", 1);
+		ft_putendl_fd("free data->argv = OK", 1); // delete
 	}
 	printf("data = %p\n", data);
 	if (data)
 	{
 		free(data);
-		ft_putendl_fd("free data = OK", 1);
+		ft_putendl_fd("free data = OK", 1); // delete
 	}
 }
 
@@ -47,10 +59,6 @@ void	ft_free_lst_env(t_env *lst)
 	}
 }
 
-// didn't test it
-// cases:
-// if del(node == first) -> lst = first->next
-// change from t_env *del to name
 void	ft_delnode_env(t_env **lst, char *name)
 {
 	t_env	*cur;

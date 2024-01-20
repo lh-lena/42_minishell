@@ -47,8 +47,7 @@ void	cd_cmd(t_data *data, char **arg)
 		}
 		else
 		{
-			ft_putendl_fd("bash: cd: HOME not set", 2);
-			data->exit_status = 1;
+			print_error(data, "bash: cd: HOME not set", 1);
 		}
 	}
 	else if (size == 2)

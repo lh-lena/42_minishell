@@ -66,6 +66,37 @@ TODO
 // function to change VAR to VAR if -> " and return string without ",
 else -> ' doesn't change VAR and return string without '
 
+// Rules for Naming variable name ---> // https://bash.cyberciti.biz/guide/Rules_for_Naming_variable_name
+input -> 'str1+"''str2'"str3$t""str4"
+
+
+i = 0;
+j = 0;
+while (input[i++])
+{
+	if (input[i] == 39) // '
+	{
+		j = i;
+		j++;
+		while (input[i++] != 39)
+			i++;
+	}
+	else if (input[i] == 34) // " is threre $VAR?
+	{
+		j = i;
+		j++;
+		while (input[i++] != 39)
+			i++;
+	}
+	if (input[i] == 34 || input[i] == 39)
+	{
+		j = i;
+		j++;
+	}
+	i++;
+}
+
+
 
 // to compile
 ohladkov@c4b4c6:~/Documents/minishell$ cc -Wall -Werror -Wextra *.c -lreadline -fsanitize=address

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   export_utils.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ohladkov <ohladkov@student.42berlin.d      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/20 13:37:01 by ohladkov          #+#    #+#             */
+/*   Updated: 2024/01/20 13:37:02 by ohladkov         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "sh.h"
 
 int	isvalid_export_input(char *str)
@@ -53,19 +65,19 @@ int isvalid_var_name_char(int c)
 	return (1);
 }
 
-
 // return 0 - if no quotes, -1 - if qouts don't close, 1 = ', 2 = "
 int	is_quotes(char *value)
 {
-	int		i;
-	int		res;
+	int	i;
+	int	res;
 
-	i = -1;
+	i = 0;
 	res = 0;
-	while (++i < (int)ft_strlen(value) && value[i])
+	while (i < (int)ft_strlen(value) && value[i])
 	{
-		if (value[i++] == 39) // iteration ok?
+		if (value[i] == 39) // iteration ok?
 		{
+			i++;
 			res = 1;
 			while (value[i] != 39)
 			{	
@@ -74,8 +86,9 @@ int	is_quotes(char *value)
 				i++;
 			}
 		}
-		else if (value[i++] == 34)
+		else if (value[i] == 34)
 		{
+			i++;
 			res = 2;
 			while (value[i] != 34)
 			{	
@@ -84,6 +97,7 @@ int	is_quotes(char *value)
 				i++;
 			}
 		}
+		i++;
 	}
 	return (res);
 }

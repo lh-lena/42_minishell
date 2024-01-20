@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/20 13:35:43 by ohladkov          #+#    #+#             */
+/*   Updated: 2024/01/20 16:24:03 by ohladkov         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 
 #include "sh.h"
 
@@ -24,53 +36,6 @@ t_env *ft_getenv(char **envp)
 	if (env_update_val(env, "_", "/usr/bin/env") == 0)
 		perror("error var not found");
 	return (env);
-}
-
-// if there is var in the envp, return len of its value, otherwise 0
-size_t	env_isvar_name(t_env *envp, char *name)
-{
-	t_env	*temp;
-
-	temp = envp;
-	while (temp != NULL)
-	{
-		if (ft_strncmp(temp->name, name, ft_strlen(name)) == 0)
-			return (ft_strlen(temp->value));
-		temp = temp->next;
-	}
-	return (0);
-}
-
-// to update a value existed variable, if no one found return 0
-int	env_update_val(t_env *envp, char *name, char *value)
-{
-	while (envp != NULL)
-	{
-		if (ft_strncmp(envp->name, name, ft_strlen(name)) == 0)
-		{
-			free(envp->value);
-			envp->value = (char *)ft_calloc(ft_strlen(value) + 1, sizeof(char));
-			ft_strlcpy(envp->value, value, ft_strlen(value));
-			return (1);
-		}
-		envp = envp->next;
-	}
-	return (0);
-}
-
-// return VAR's VALUE, if no found return NULL
-char	*env_get_var_value(t_env *envp, char *name)
-{
-	t_env	*temp;
-
-	temp = envp;
-	while (temp != NULL)
-	{
-		if (ft_strncmp(temp->name, name, ft_strlen(name)) == 0)
-			return (temp->value);
-		temp = temp->next;
-	}
-	return (NULL);
 }
 
 void	env_print(t_data *data)

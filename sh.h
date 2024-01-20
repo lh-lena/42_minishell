@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   sh.h                                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/20 13:40:56 by ohladkov          #+#    #+#             */
+/*   Updated: 2024/01/20 15:55:43 by ohladkov         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef SH_H
 # define SH_H
 
@@ -37,7 +49,7 @@ typedef struct s_data
 	t_env	*env_lst; // copied envp (malloc)
 }	t_data;
 
-// libft
+// libft.c
 char	**ft_split(char const *s, char c);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 char	*ft_strchr(const char *s, int c);
@@ -53,6 +65,7 @@ int		ft_isdigit(int c);
 int		ft_isascii(int c);
 char	*ft_strchr(const char *s, int c);
 char	*ft_strrchr(const char *s, int c);
+void	ft_striteri(char *s, void (*f)(unsigned int, char*));
 
 // str_utils
 int		ft_isspace(int c);
@@ -85,6 +98,10 @@ void	ft_free_node_env(t_env *node);
 // free
 void	ft_free_data(t_data	*data);
 
+// error_handle
+void	print_error(t_data *data, char *msg,  int er_num);
+void	print_error_arg(t_data *data, char *msg, char *arg, char *msg2, int er_num);
+
 // sh_utils
 void	panic(char	*s);
 void	ft_print_new_prompt(void);
@@ -110,11 +127,14 @@ char	*export_execution(t_data *data, char *input);
 char	*get_replaced_str(t_env *envp, char *s);
 char	*replace_var_value(t_env *envp, char *s, char **var_names, size_t value_len);
 void	replace_str(char *new, t_env *envp, char *s, char **var_names);
-char	*env_get_var_value(t_env *envp, char *name);
+char	*env_get_var_value(t_env *envp, char *str);
 void	env_replace_or_create_node(t_env *envp, char *input);
 
 char	**get_var_name_arr(char *s, char c);
 char	**var_split(char *s, char c);
+
+// edit_str
+char	*edit_str(t_env *envp, char *str);
 
 // export_utils
 int		isvalid_export_input(char *str);
@@ -128,7 +148,8 @@ void	pwd_cmd(t_data *data);
 void	env_print(t_data *data);
 t_env	*ft_getenv(char **envp);
 int		env_update_val(t_env *envp, char *name, char *value);
-size_t	env_isvar_name(t_env *envp, char *name);
+size_t	env_isvar_name(t_env *envp, char *str);
+char	*copy_var_name(char *str);
 
 // unset (Removes variable from environment | $VAR)
 void	unset(t_data *data, char **input);

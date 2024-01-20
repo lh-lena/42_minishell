@@ -1,7 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   export_get_replaced_string.c                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/20 13:37:10 by ohladkov          #+#    #+#             */
+/*   Updated: 2024/01/20 16:29:09 by ohladkov         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "sh.h"
 
-// str: varname=fkjfj$lkd return a new allocated str with replaced variables
+// return a new allocated str with replaced variables
 char	*get_replaced_str(t_env *envp, char *s)
 {
 	char	*new;
@@ -9,13 +20,13 @@ char	*get_replaced_str(t_env *envp, char *s)
 	size_t	value_len;
 	int		i;
 
-	var_names = get_var_name_arr(s, '$'); // malloc
+	var_names = get_var_name_arr(s, '$');
 	new = NULL;
 	i = -1;
 	value_len = 0;
 	while (var_names[++i])
 		value_len += env_isvar_name(envp, var_names[i]);
-	new = replace_var_value(envp, s, var_names, value_len); // malloc
+	new = replace_var_value(envp, s, var_names, value_len);
 	ft_free_arr(var_names);
 	return (new);
 }
@@ -29,7 +40,7 @@ char	*replace_var_value(t_env *envp, char *s, char **var_names, size_t value_len
 
 	names_len = ft_arrlen(var_names) + ft_arrsize(var_names);
 	len = ft_strlen(s) - names_len + value_len;
-	new = (char *)ft_calloc(len + 1, sizeof(char));// malloc
+	new = (char *)ft_calloc(len + 1, sizeof(char));
 	if (!new)
 		perror("malloc");
 	replace_str(new, envp, s, var_names);
@@ -39,12 +50,12 @@ char	*replace_var_value(t_env *envp, char *s, char **var_names, size_t value_len
 // to set allocated empty 'new' with replaced var's value
 void	replace_str(char *new, t_env *envp, char *s, char **var_names)
 {
-	int		i;
+	int	i;
 
 	i = 0;
 	while (*s != '\0')
 	{
-		if (*s == '$' && (isvalid_var_name_char(*(s + 1))))
+		if (*s == '$' && isvalid_var_name_char(*(s + 1)))
 		{
 			s++;
 			if (env_isvar_name(envp, var_names[i]))

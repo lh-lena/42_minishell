@@ -61,7 +61,6 @@ size_t	ft_lstsize_env(t_env *lst)
 	return (i);
 }
 
-// indicate arg = 1 for export no arguments
 void	ft_print_lst_env(t_env **lst, int arg)
 {
 	t_env	*temp;
