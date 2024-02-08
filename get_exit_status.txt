@@ -37,3 +37,27 @@ else
 
 return (0);
 */
+
+/*
+status = -1;
+	exit_code = -1;
+	while (++i < data->cmd_nb)
+	{
+		waitpid(pr_id[i], &status, 0);
+		if (WIFEXITED(status) && WEXITSTATUS(status) == 0) 
+		{
+			exit_code = WEXITSTATUS(status);
+			printf("Child process with PID %d exited with status %d\n", pr_id[i], status);
+			data->exit_status = 0;
+			printf("exit_st: %d\n", data->exit_status);
+		}
+		else
+		{
+			exit_code = WEXITSTATUS(status);
+			printf("exit_code: %d\n", exit_code);
+			printf("Child process with PID %d terminated abnormally\n", pr_id[i]);
+			data->exit_status = 127;
+			printf("exit_st: %d\n", data->exit_status);
+		}
+	}
+*/

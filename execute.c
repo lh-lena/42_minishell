@@ -1,34 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   var_split.c                                        :+:      :+:    :+:   */
+/*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/20 13:41:22 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/01/21 10:20:55 by ohladkov         ###   ########.fr       */
+/*   Created: 2024/01/26 13:53:45 by kdzhoha           #+#    #+#             */
+/*   Updated: 2024/02/08 10:46:04 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
 
-char	**var_split(char *s, char c)
+int	execute(char **cmd, char *envp[])
 {
-	char			**res;
-	unsigned int	i;
+	char	*path;
+	char	**dir;
+	int		res;
+	int		i;
 
-	res = (char **)ft_calloc(2 + 1, sizeof(char *));
-	if (res == NULL)
-		return (NULL);
+	if (access(cmd[0], F_OK) == 0)
+		return (execve(cmd[0], cmd, envp));
+	dir = get_path(envp);
+	if (!dir)
+		return (-1);
 	i = 0;
-	while (s[i] != c && s[i])
+	while (dir[i])
+	{
+		path = ft_strcat(dir[i], cmd[0]);
+		res = execve(path, cmd, envp);
+		free(path);
 		i++;
-	res[0] = ft_substr(s, 0, i);
-	if (res[0] == NULL)
-		return (res);
-	res[1] = ft_substr(s, i + 1, ft_strlen(s) - i - 1);
-	if (res[1] == NULL)
-		return (res);
-	res[2] = NULL;
+	}
+	ft_free_arr(dir);
 	return (res);
 }

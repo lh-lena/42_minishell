@@ -1,82 +1,216 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/03 16:06:19 by kdzhoha           #+#    #+#             */
+/*   Updated: 2024/02/08 18:50:51 by ohladkov         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "sh.h"
 
-// to change ->
-// if (ft_strncmp(input->argv[0], "cd_cmd", 2) == 0) -> if (ft_strncmp(input->argv[0], 'cd_cmd', ft_strlen(argv[0])) == 0)
-static void	check_cmd(t_data *input, char **arr)
+void	print_result(t_command *cmd)
 {
-	if (ft_strncmp(arr[0], "cd_cmd", ft_strlen(arr[0])) == 0)
-		cd_cmd(input, arr);
-	else if (ft_strncmp(arr[0], "pwd", ft_strlen(arr[0])) == 0)
-		pwd_cmd(input);
-	else if (ft_strncmp(arr[0], "exit", ft_strlen(arr[0])) == 0)
+	int		i;
+
+	while (cmd != NULL)
 	{
-		if (is_exit(input))
-			exit_handler(input);
+		i = 0;
+		while (cmd->cmd && cmd->cmd[i])
+		{
+			printf("cmd%i: %s\n", i, cmd->cmd[i]);
+			i++;
+		}
+		i = 0;
+		while (cmd->redir && cmd->redir[i])
+		{
+			printf("redir%i: %s\n", i, cmd->redir[i]);
+			i++;
+		}
+		cmd = cmd->next;
 	}
-	else if(ft_strncmp(arr[0], "env", ft_strlen(arr[0])) == 0)
-		env_print(input);
-	else if (ft_strncmp(arr[0], "export", ft_strlen(arr[0])) == 0)
-		export(input, arr);
-	else if (ft_strncmp(arr[0], "unset", ft_strlen(arr[0])) == 0)
-		unset(input, arr);
+}
+
+/* 
+to pass error value from ececve to parent pros.  */
+void	execve_tr(t_data *data, char **arr)
+{
+	char	*temp;
+	int		val;
+
+	if (!arr[0])
+		return ;
+	val = 0;
+	temp = arr[0];
+	if (ft_strncmp(temp, "pwd", ft_strlen(temp)) == 0)
+		pwd_cmd(data);
+	else if (ft_strncmp(temp, "echo", ft_strlen(temp)) == 0)
+		echo_builtin(data, arr);
+	else if (ft_strncmp(temp, "env", ft_strlen(temp)) == 0)
+		env_print(data);
 	else
-		execve_tr(input);
-	if (arr != NULL)
-		ft_free_arr(arr);
+		val = execute(arr, data->new_envp);
+	if (val == -1)
+	{
+		perror("bash");
+		exit(127);
+	}
 }
 
-static void	parse_input(t_data	*input)
+// removed all builtins that could be run within pipes, moved them to execve_tr
+int	check_cmd(t_data *data, char **arr)
 {
-	// if (input->argv != NULL)
-	// 	ft_free_arr(input->argv);
-	input->argv = ft_split(input->input, ' '); //malloc
-	if (!input->argv)
-		perror("malloc\n");
-	// free(input->input);
-	// input->input = NULL;
-	check_cmd(input, input->argv);
+	int		res;
+	char	*temp;
+
+	if (!arr || data->pipes_nb != 0)
+		return (0);
+	res = 1;
+	temp = arr[0];
+	if (ft_strncmp(temp, "exit", ft_strlen(temp)) == 0)
+	{
+		if (is_exit(data))
+			exit_handler(data);
+	}
+	else if (ft_strncmp(temp, "export", ft_strlen(temp)) == 0)
+		export(data, arr);
+	else if (ft_strncmp(temp, "unset", ft_strlen(temp)) == 0)
+		unset(data, arr);
+	else if (ft_strncmp(temp, "cd", ft_strlen(temp)) == 0)
+		cd_builtin(data, arr);
+	else
+		return (0);
+	return (res);
 }
 
-void	init_data(t_data *data)
+char	**expand_arr(char **arr, t_data *data)
 {
-	data->argv = NULL;
+	char	**res;
+	int		i;
+
+	i = 0;
+	while (arr[i])
+		i++;
+	res = (char **)malloc((i + 1) * sizeof(char *));
+	i = 0;
+	while (arr[i])
+	{
+		res[i] = expand_str(data, arr[i]);
+		i++;
+	}
+	res[i] = NULL;
+	return (res);
+}
+
+void	expand_input(t_data *data)
+{
+	char		**temp;
+	t_command	*cur;
+
+	cur = data->cmd;
+	while (cur)
+	{
+		if (cur->cmd)
+		{
+			temp = cur->cmd;
+			cur->cmd = expand_arr(temp, data);
+			ft_free_arr(temp);
+		}
+		if (cur->redir)
+		{
+			temp = cur->cmd;
+			cur->cmd = expand_arr(temp, data);
+			ft_free_arr(temp);
+		}
+		cur = cur->next;
+	}
+}
+
+static void	init_data(t_data *data)
+{
 	data->exit_status = 0;
+	data->cmd = NULL;
+	data->len = 0;
+	data->new_envp = NULL;
+	data->exit_c = NULL;
+	data->pipes_nb = 0;
+	data->cmd_nb = 0;
+	data->fd_inp = dup(STDIN_FILENO);
+	data->fd_outp = dup(STDOUT_FILENO);
 }
 
 void	minishell(t_data *data)
 {
+	t_command	*cmd;
+
+	cmd = NULL;
 	while (1)
 	{
-		data->input = readline("sh$ ");
+		manage_signal();
+		data->input = readline("minishell$ ");
 		if (!data->input)
 		{
-			ft_putendl_fd("ctrl+D", 1);
-			ft_free_data(data);
-			exit(1);
+			data->exit_status = 0;
+			exit_handler(data);
+		}
+		if (*data->input == '\0') // press ENTER - ok | TAB - ok | 
+			ft_putstr_fd("", 1);
+		else if (is_whitespace_str(data->input)) // SPACE - ok | TODO as a function 
+		{
+			data->exit_status = 0;
+			create_history(data);
+			ft_free(&data->input);
+			ft_putstr_fd("", 1);
+		}
+		else if (is_quotes(data->input) == -1)
+		{
+			create_history(data);
+			ft_free(&data->input);
+			put_error(data, "bash: Quotes are not correctly closed", 5);
 		}
 		else
 		{
+			data->new_envp = new_envp(data);
 			create_history(data);
-			parse_input(data);
+			cmd = parse_input(data);
+			data->cmd = cmd;
+			expand_input(data); // made new function to edit all parts of input
+			if (check_cmd(data, data->cmd->cmd) == 0)
+				process_command(data);
+			if (data->cmd)
+			{
+				free_command_lst(data->cmd);
+				data->cmd = NULL;
+				data->cmd_nb = 0;
+				data->pipe_fds = NULL;
+				data->pipes_nb = 0;
+			}
+			if (data->new_envp)
+			{
+				ft_free_arr(data->new_envp);
+				data->new_envp = NULL;
+			}
 		}
 	}
 }
 
-int main(int ac, char **av, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
-	(void)ac;
-	(void)av;
-	// manage_signal();
-	// determines if file descriptor is associated with a terminal
-	if (isatty(STDIN_FILENO) == 1)
-	{
-		t_data	*data;
+	t_data		*data;
 
-		data = (t_data *)malloc(sizeof(t_data));
-		data->envp = envp;
-		data->env_lst = ft_getenv(envp);
-		init_data(data);
-		minishell(data);
-	}
+	(void)argv;
+	if (argc != 1)
+		return (0);
+	if (isatty(STDIN_FILENO) != 1)
+		return (1);
+	data = (t_data *)malloc(sizeof(t_data));
+	if (!data)
+		malloc_error();
+	init_data(data);
+	data->env_lst = ft_getenv(envp);
+	minishell(data);
 	return (0);
 }

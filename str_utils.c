@@ -6,7 +6,7 @@
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/06 14:54:05 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/01/19 20:28:05 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/06 17:28:36 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ int	ft_isspace(int c)
 		return (1);
 	return (0);
 }
+
 int	ft_issign(int c)
 {
 	if (c == 43 || c == 45)
@@ -52,28 +53,20 @@ int	ft_issign(int c)
 	return (0);
 }
 
-char	*ft_substr(char *s, unsigned int start, size_t len)
+int	is_whitespace_str(char *str)
 {
-	char	*str;
-	size_t	i;
+	int	i;
 
-	if (!s)
-		return (NULL);
-	if (start > ft_strlen(s))
-		return (malloc(1));
-	if (len > ft_strlen(s + start))
-		len = ft_strlen(s + start);
-	str = (char *)ft_calloc((len + 1),sizeof(char));
-	if (!str)
-		return (NULL);
 	i = 0;
-	while (i < len)
+	while (str[i])
 	{
-		str[i] = s[start + i];
+		if (!is_whitespace(str[i]))
+		{
+			return (0);
+		}
 		i++;
 	}
-	str[i] = '\0';
-	return (str);
+	return (1);
 }
 
 void	str_copy(char *s1, char *s2)
@@ -86,4 +79,14 @@ void	str_copy(char *s1, char *s2)
 		s1++;
 		s2++;
 	}
+}
+
+int	isspecial_char(int c)
+{
+	return (c == 34 || c == 36 || c == 92 || c == 96);
+}
+
+int	handle_name(int	c)
+{
+	return (c == '?');
 }

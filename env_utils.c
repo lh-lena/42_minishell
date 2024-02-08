@@ -6,7 +6,7 @@
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:35:53 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/01/20 16:20:32 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/02 14:47:26 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,11 @@ int	env_update_val(t_env *envp, char *name, char *value)
 {
 	while (envp != NULL)
 	{
-		if (ft_strncmp(envp->name, name, ft_strlen(name)) == 0)
+		if (ft_strncmp(envp->name, name, ft_strlen(envp->name)) == 0)
 		{
 			free(envp->value);
 			envp->value = (char *)ft_calloc(ft_strlen(value) + 1, sizeof(char));
-			ft_strlcpy(envp->value, value, ft_strlen(value));
+			ft_strlcpy(envp->value, value, ft_strlen(value) + 1);
 			return (1);
 		}
 		envp = envp->next;
@@ -41,14 +41,14 @@ void	env_replace_or_create_node(t_env *envp, char *input)
 	{
 		new = ft_new_node_env(input);
 		if (!new)
-			perror("malloc");
+			malloc_error();
 		ft_lstadd_back_env(&envp, new);
 		ft_free_arr(var_val);
 	}
 }
 
 // return VAR's VALUE, if no found return NULL
-char	*env_get_var_value(t_env *envp, char *str)
+char	*env_var_value(t_env *envp, char *str)
 {
 	t_env	*temp;
 	char	*name;
@@ -61,7 +61,7 @@ char	*env_get_var_value(t_env *envp, char *str)
 	temp = envp;
 	while (temp != NULL)
 	{
-		if (ft_strncmp(temp->name, name, ft_strlen(name)) == 0)
+		if (ft_strncmp(temp->name, name, ft_strlen(temp->name)) == 0)
 		{
 			free(name);
 			return (temp->value);
@@ -86,10 +86,13 @@ size_t	env_isvar_name(t_env *envp, char *str)
 	temp = envp;
 	while (temp != NULL)
 	{
-		if (ft_strncmp(temp->name, name, ft_strlen(name)) == 0)
+		if (ft_strncmp(temp->name, name, ft_strlen(temp->name)) == 0)
 		{
 			free(name);
-			return (ft_strlen(temp->value));
+			if (ft_strlen(temp->value))
+				return (ft_strlen(temp->value));
+			else
+				return (1);
 		}
 		temp = temp->next;
 	}

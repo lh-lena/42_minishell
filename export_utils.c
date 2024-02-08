@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:37:01 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/01/20 13:37:02 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/03 14:09:18 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@ int	isvalid_export_input(char *str)
 		return (0);
 	if (!ft_strchr(str, '='))
 		return (0);
-	var_val = var_split(str, '='); // malloc
+	var_val = var_split(str, '=');
 	if (!var_val)
-		perror("malloc");
+		malloc_error();
 	if (!isvalid_var_name_str(var_val[0]))
 	{
 		ft_free_arr(var_val);
@@ -40,14 +40,12 @@ int	isvalid_var_name_str(char *str)
 	i = 0;
 	if (ft_isdigit(*str) || *str == '=')
 	{
-		printf("Error isvalid_var_name_str, start with digit\n"); // exit_st 1
 		return (0);
 	}
-	while (str[i])
+	while (str[i] != '=' && str[i])
 	{
 		if (!isvalid_var_name_char(str[i]))
 		{
-			printf("Error isvalid_var_name_str\n"); //delete
 			return (0);
 		}
 		i++;
@@ -56,7 +54,7 @@ int	isvalid_var_name_str(char *str)
 }
 
 // valid var_name-> a-zA-Z0-9_
-int isvalid_var_name_char(int c)
+int	isvalid_var_name_char(int c)
 {
 	if (!ft_isalnum(c) && c != 95)
 	{
@@ -75,12 +73,12 @@ int	is_quotes(char *value)
 	res = 0;
 	while (i < (int)ft_strlen(value) && value[i])
 	{
-		if (value[i] == 39) // iteration ok?
+		if (value[i] == 39)
 		{
 			i++;
 			res = 1;
 			while (value[i] != 39)
-			{	
+			{
 				if (value[i] == '\0')
 					return (-1);
 				i++;
@@ -91,7 +89,7 @@ int	is_quotes(char *value)
 			i++;
 			res = 2;
 			while (value[i] != 34)
-			{	
+			{
 				if (value[i] == '\0')
 					return (-1);
 				i++;

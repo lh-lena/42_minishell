@@ -1,29 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   sh_utils.c                                         :+:      :+:    :+:   */
+/*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/20 13:41:03 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/01/20 16:25:19 by ohladkov         ###   ########.fr       */
+/*   Created: 2024/01/20 18:17:34 by ohladkov          #+#    #+#             */
+/*   Updated: 2024/02/02 15:03:33 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
 
-int	fork1(void)
+void	pwd_cmd(t_data *data)
 {
-	int	pid;
-	pid = fork();
-	if (pid == -1)
-		panic("fork\n");
-	return (pid);
-}
+	char	*pwd;
 
-void	ft_print_new_prompt(void)
-{
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
+	pwd = getcwd(NULL, 0);
+	if (pwd)
+	{
+		data->exit_status = 0;
+		ft_putendl_fd(pwd, 1);
+	}
+	else
+		put_error(data, strerror(errno), 1);
+	ft_free(&pwd);
 }

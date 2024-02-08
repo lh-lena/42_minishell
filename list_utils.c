@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   list_utils.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/20 18:07:07 by ohladkov          #+#    #+#             */
+/*   Updated: 2024/01/28 18:24:31 by ohladkov         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "sh.h"
 
 t_env	*ft_new_node_env(char *str)
@@ -7,21 +19,18 @@ t_env	*ft_new_node_env(char *str)
 
 	temp = (t_env *)malloc(sizeof(t_env));
 	if (!temp)
-	{
-		perror("malloc");
-		return (0);
-	}
+		malloc_error();
 	arr = var_split(str, '=');
 	if (!arr)
-		perror("malloc");
+		malloc_error();
 	temp->name = (char *)ft_calloc(ft_strlen(arr[0]) + 1, 1);
 	if (!temp->name)
-		perror("malloc");
-	ft_strlcpy(temp->name, arr[0], ft_strlen(arr[0]));
+		malloc_error();
+	ft_strlcpy(temp->name, arr[0], ft_strlen(arr[0]) + 1);
 	temp->value = (char *)ft_calloc(ft_strlen(arr[1]) + 1, 1);
 	if (!temp->value)
-		perror("malloc");
-	ft_strlcpy(temp->value, arr[1], ft_strlen(arr[1]));
+		malloc_error();
+	ft_strlcpy(temp->value, arr[1], ft_strlen(arr[1]) + 1);
 	temp->next = NULL;
 	ft_free_arr(arr);
 	return (temp);
@@ -58,6 +67,25 @@ size_t	ft_lstsize_env(t_env *lst)
 		temp = temp->next;
 		i++;
 	}
+	return (i);
+}
+
+size_t	ft_lstsize_node(t_env *lst)
+{
+	t_env	*temp;
+	size_t	i;
+
+	if (lst == 0)
+		return (0);
+	temp = lst;
+	i = 0;
+	while (temp)
+	{
+		i += ft_strlen(temp->name);
+		i += ft_strlen(temp->value);
+		temp = temp->next;
+	}
+	i += ft_lstsize_env(lst);
 	return (i);
 }
 

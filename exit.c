@@ -6,7 +6,7 @@
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:36:40 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/01/20 16:28:21 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/08 17:19:33 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,22 +23,16 @@ int	is_exit(t_data *data)
 
 	arr = ft_split(data->input, ' ');
 	if (!arr)
-		perror("malloc");
+		malloc_error();
 	size = ft_arrsize(arr);
-	i = 0;
-	if (ft_strncmp(arr[0], "exit", ft_strlen(arr[0])) == 0) // delete
+	i = 1;
+	if (size == 2)
+		i = check_exit_arg(data, arr[1]);
+	else if (size > 2)
 	{
-		i = 1;
-		if (size == 2)
-			i = check_exit_arg(data, arr[1]);
-		else if (size > 2)
-		{
-			i = 0;
-			print_error(data, "exit\nbash: exit: too many arguments", 1);
-		}
-	}
-	else
 		i = 0;
+		put_error(data, "exit\nbash: exit: too many arguments", 1);
+	}
 	ft_free_arr(arr);
 	return (i);
 }
@@ -53,7 +47,8 @@ static int	check_exit_arg(t_data *data, char *str)
 	else
 	{
 		i = 1;
-		print_error_arg(data, "exit\nbash: exit: ", str, ": numeric argument required", 2);
+		put_error_arg(data, "exit\nbash: exit: ", str, \
+		": numeric argument required", 2);
 	}
 	return (i);
 }
@@ -70,15 +65,15 @@ static int	ft_calc_exit_status(char *str)
 
 void	exit_handler(t_data *data)
 {
-	int		er_num;
+	int		num;
 
-	er_num = data->exit_status;
+	num = data->exit_status;
 	rl_clear_history();
 	if (data)
 		ft_free_data(data);
 	ft_putendl_fd("exit", 2);
-	printf("exit_status = %d\n", er_num); // delete
-	exit(er_num);
+	// printf("num: %d\n", num); // delete
+	exit(num);
 }
 
 /*
@@ -110,8 +105,7 @@ exit //
 ohladkov@c4b4c6:~$ exit +2
 exit
 c4b4c6% echo $?
-2
-c4b4c6% bash   
+2  
 ohladkov@c4b4c6:~$ exit -2
 exit
 c4b4c6% echo $?
@@ -121,3 +115,15 @@ c4b4c6% echo $?
 --- 6 ---
 --- 7 ---
 */
+
+/* ohladkov@c1b1c1:~/Documents/minishell$ cat | cat | cat | ls
+arr_utils.c  env.o	  expand_str.c		export_utils.o	       helpers.c     list_utils.o   pwd.o	    unset.o
+^C
+ohladkov@c1b1c1:~/Documents/minishell$ echo $?
+0
+ohladkov@c1b1c1:~/Documents/minishell$ cat | cat | cat 
+^C
+ohladkov@c1b1c1:~/Documents/minishell$ echo $?
+130
+ohladkov@c1b1c1:~/Documents/minishell$ 
+ */
