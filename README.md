@@ -8,9 +8,9 @@ The goal of the project is to recreate a simplified version of a Unix shell, cap
 
 # Features:
 * Display a **prompt** when waiting for a new command
-* **Command Execution**:\n
+* **Command Execution**:
     * Ability to execute commands entered by the user
-* **History**:\n
+* **History**:
     * Implement command history functionality
 * **Built-in Commands**:
     * Implementation of built-in shell commands such as
