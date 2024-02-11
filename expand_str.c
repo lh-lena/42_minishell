@@ -1,49 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   arr_utils.c                                        :+:      :+:    :+:   */
+/*   expand_str.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/20 13:35:32 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/01/20 17:46:10 by ohladkov         ###   ########.fr       */
+/*   Created: 2024/01/20 13:35:53 by ohladkov          #+#    #+#             */
+/*   Updated: 2024/02/06 17:05:45 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
 
-void	print_arr(char **arr)
+// return pointer to new allocated string without qoutes, replaced variable
+char	*expand_str(t_data *data, char *input)
 {
-	int	i;
+	char	*temp_new;
 
-	i = 0;
-	while (arr[i])
+	temp_new = NULL;
+	if (is_quotes(input) == 1 || is_quotes(input) == 2 || \
+	ft_strchr(input, '$') || ft_strchr(input, '\\'))
 	{
-		printf("%d = %s\n", i, arr[i]);
-		i++;
+		temp_new = substitute_str(data, input);
+		if (!temp_new)
+			malloc_error();
 	}
-}
-
-size_t	ft_arrsize(char	**arr)
-{
-	size_t	size;
-
-	size = 0;
-	while (arr[size])
-		size++;
-	return (size);
-}
-
-size_t	ft_arrlen(char **arr)
-{
-	size_t	size;
-	int		i;
-
-	i = -1;
-	size = 0;
-	while (arr[++i])
+	else
 	{
-		size += ft_strlen(arr[i]);
+		temp_new = ft_strdup(input);
+		if (!temp_new)
+			malloc_error();
 	}
-	return (size);
+	return (temp_new);
 }

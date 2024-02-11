@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   unset.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/20 13:41:14 by ohladkov          #+#    #+#             */
+/*   Updated: 2024/02/11 12:13:05 by ohladkov         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "sh.h"
 
@@ -5,16 +16,14 @@
 // unset var1 var2 var3
 void	unset(t_data *data, char **input)
 {
-	int		i;
+	int	i;
 
-	data->exit_status = 0; // bash doesn't react at all, always success
+	data->exit_status = 0;
 	i = 0;
 	while (input[++i])
 	{
 		if (env_isvar_name(data->env_lst, input[i]))
 			ft_delnode_env(&data->env_lst, input[i]);
-		else
-			perror("var_name not found"); // delete
 	}
 }
 

@@ -1,54 +1,127 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cd.c                                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/20 18:17:34 by ohladkov          #+#    #+#             */
+/*   Updated: 2024/02/11 11:27:51 by ohladkov         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "sh.h"
 
-/*This ensures that the chdir function receives an absolute path, 
-whether the user provided an absolute or relative path as an argument to cd*/
-// https://www.ibm.com/docs/en/zos/2.2.0?topic=descriptions-cd-change-working-directory
+static int	check_dir(char *path);
+static void	tohome_dir(t_data *data);
+static void	toprev_dir(t_data *data);
+static void	change_dir(t_data *data, char *path);
 
-// arg[0] cd
-// arg[1] (path)
-void	cd(t_data *data, char **arg)
+void	cd_builtin(t_data *data, char **arr)
 {
-	char	*pwd;
+	size_t	size;
+
+	size = ft_arrsize(arr);
+	data->exit_status = 0;
+	if (size > 2)
+		put_error(data, "bash: cd: too many arguments", 1);
+	else if (size == 1)
+		tohome_dir(data);
+	else if (ft_strncmp(arr[1], "~", ft_strlen(arr[1])) == 0 && size == 2)
+		tohome_dir(data);
+	else if (ft_strncmp(arr[1], "-", ft_strlen(arr[1])) == 0 && size == 2)
+		toprev_dir(data);
+	else if (check_dir(arr[1]) == 0)
+		put_error(data, "cd: No such file or directory", 1);
+	else if (size == 2)
+		change_dir(data, arr[1]);
+}
+
+static int	check_dir(char *path)
+{
+	DIR	*temp_dir;
+
+	temp_dir = opendir(path);
+	if (temp_dir == NULL)
+	{
+		return (0);
+	}
+	if (closedir(temp_dir) == -1)
+		perror("closedir");
+	return (1);
+}
+
+static void	change_dir(t_data *data, char *path)
+{
+	char	*old_pwd;
 	char	*new_pwd;
 
-	pwd = getcwd(NULL, 0);
-	printf("first pwd = %s\n", pwd);//delete
-	printf("PWD:%s\n", env_get_var_value(data->env_lst, "PWD"));//delete
-	printf("OLDPWD:%s\n", env_get_var_value(data->env_lst, "OLDPWD")); //delete
-	env_update_val(data->env_lst, "OLDPWD", pwd);
-	if (arg[1] == NULL)
+	old_pwd = getcwd(NULL, 0);
+	new_pwd = NULL;
+	if (chdir(path) == 0)
 	{
-		new_pwd = env_get_var_value(data->env_lst, "HOME");
+		new_pwd = getcwd(NULL, 0);
+		if (new_pwd)
+		{
+			env_update_val(data->env_lst, "PWD", new_pwd);
+			if (old_pwd)
+				env_update_val(data->env_lst, "OLDPWD", old_pwd);
+			else
+				put_error(data, strerror(errno), 1);
+		}
+		else
+			put_error(data, strerror(errno), 1);
 	}
 	else
+		put_error_arg(data, "bash: cd: ", path, strerror(errno), 1);
+	ft_free(&old_pwd);
+	ft_free(&new_pwd);
+}
+
+static void	tohome_dir(t_data *data)
+{
+	char	*old_pwd;
+	char	*new_pwd;
+
+	new_pwd = env_var_value(data->env_lst, "HOME");
+	old_pwd = getcwd(NULL, 0);
+	if (new_pwd)
 	{
-		chdir(arg[1]);
-		new_pwd = getcwd(NULL, 0);
-		printf("pwd to given directory = %s\n", new_pwd);//delete
+		if (chdir(new_pwd) == 0)
+		{
+			env_update_val(data->env_lst, "PWD", new_pwd);
+			if (old_pwd)
+				env_update_val(data->env_lst, "OLDPWD", old_pwd);
+			else
+				put_error(data, strerror(errno), 1);
+		}
+		else
+			put_error(data, strerror(errno), 1);
 	}
+	else
+		put_error(data, "bash: cd: HOME not set", 1);
+	ft_free(&old_pwd);
 }
 
-/*
-void pwd_command() {
-    char *current_directory = getcwd(NULL, 0);
+static void	toprev_dir(t_data *data)
+{
+	char	*old_pwd;
+	char	*new_pwd;
 
-    if (current_directory != NULL) {
-        printf("%s\n", current_directory);
-        free(current_directory); // Free the memory allocated by getcwd
-    } else {
-        perror("pwd");
-    }
+	old_pwd = env_var_value(data->env_lst, "OLDPWD");
+	new_pwd = getcwd(NULL, 0);
+	if (old_pwd != NULL)
+	{
+		if (chdir(old_pwd) == 0)
+		{
+			env_update_val(data->env_lst, "PWD", old_pwd);
+			if (new_pwd)
+				env_update_val(data->env_lst, "OLDPWD", new_pwd);
+			else
+				put_error(data, strerror(errno), 1);
+		}
+	}
+	else
+		put_error(data, strerror(errno), 1);
+	ft_free(&new_pwd);
 }
-*/
-
-/*
-Exit values
-0 - Successful completion
-1
-Failure due to any of the following reasons:
-No HOME directory
-No previous directory
-A search for directory failed
-An old-to-new substitution failed
-2 - An incorrect command-line option, or too many arguments
-*/

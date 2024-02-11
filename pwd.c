@@ -1,25 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   history.c                                          :+:      :+:    :+:   */
+/*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/20 13:40:15 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/01/20 18:12:29 by ohladkov         ###   ########.fr       */
+/*   Created: 2024/01/20 18:17:34 by ohladkov          #+#    #+#             */
+/*   Updated: 2024/02/02 15:03:33 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
 
-void	create_history(t_data *data)
+void	pwd_cmd(t_data *data)
 {
-	const char	*str;
+	char	*pwd;
 
-	str = data->input;
-	if (str)
-		add_history(str);
+	pwd = getcwd(NULL, 0);
+	if (pwd)
+	{
+		data->exit_status = 0;
+		ft_putendl_fd(pwd, 1);
+	}
+	else
+		put_error(data, strerror(errno), 1);
+	ft_free(&pwd);
 }
-
-// https://www.math.utah.edu/docs/info/hist_2.html
-// https://stackoverflow.com/questions/38792542/readline-h-history-usage-in-c

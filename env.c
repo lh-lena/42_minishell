@@ -1,8 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/20 13:35:43 by ohladkov          #+#    #+#             */
+/*   Updated: 2024/02/03 14:04:55 by ohladkov         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "sh.h"
 
+static char	*copy_var(t_data *data, char *name, char *value);
+
 // creat a linked list of enviroment variables 
-t_env *ft_getenv(char **envp)
+t_env	*ft_getenv(char **envp)
 {
 	t_env	*env;
 	t_env	*new;
@@ -21,79 +34,57 @@ t_env *ft_getenv(char **envp)
 		ft_lstadd_back_env(&env, new);
 		i++;
 	}
-	if (env_update_val(env, "_", "/usr/bin/env") == 0)
-		perror("error var not found");
 	return (env);
-}
-
-// if there is var in the envp, return len of its value, otherwise 0
-size_t	env_isvar_name(t_env *envp, char *name)
-{
-	t_env	*temp;
-
-	temp = envp;
-	while (temp != NULL)
-	{
-		if (ft_strncmp(temp->name, name, ft_strlen(name)) == 0)
-			return (ft_strlen(temp->value));
-		temp = temp->next;
-	}
-	return (0);
-}
-
-// to update a value existed variable, if no one found return 0
-int	env_update_val(t_env *envp, char *name, char *value)
-{
-	while (envp != NULL)
-	{
-		if (ft_strncmp(envp->name, name, ft_strlen(name)) == 0)
-		{
-			free(envp->value);
-			envp->value = (char *)ft_calloc(ft_strlen(value) + 1, sizeof(char));
-			ft_strlcpy(envp->value, value, ft_strlen(value));
-			return (1);
-		}
-		envp = envp->next;
-	}
-	return (0);
-}
-
-char	*env_get_var_value(t_env *envp, char *name)
-{
-	t_env	*temp;
-
-	temp = envp;
-	while (temp != NULL)
-	{
-		if (ft_strncmp(temp->name, name, ft_strlen(name)) == 0)
-			return (temp->value);
-		temp = temp->next;
-	}
-	return (NULL);
 }
 
 void	env_print(t_data *data)
 {
+	data->exit_status = 0;
+	if (env_update_val(data->env_lst, "_", "/usr/bin/env") == 0)
+		perror("error var not found"); // delete
 	ft_print_lst_env(&data->env_lst, 0);
 }
 
-/*
- -- env updates --
+char	**new_envp(t_data *data)
+{
+	char	**new_envp;
+	t_env	*temp;
+	size_t	i;
+	size_t	j;
 
-_=/usr/bin/env
-ohladkov@c4b7c6:~/Documents/minishell$ echo $_
-env
-ohladkov@c4b7c6:~/Documents/minishell$ export _=ls
-ohladkov@c4b7c6:~/Documents/minishell$ echo $_
-_=ls
-ohladkov@c4b7c6:~/Documents/minishell$ ls
-ohladkov@c4b7c6:~/Documents/minishell$ echo $_
-ls
+	if (!data->env_lst)
+		return (NULL);
+	i = ft_lstsize_env(data->env_lst);
+	temp = data->env_lst;
+	new_envp = (char **)ft_calloc(i + 1, sizeof(char *));
+	if (!new_envp)
+		malloc_error();
+	j = -1;
+	while (temp != NULL)
+	{
+		new_envp[++j] = copy_var(data, temp->name, temp->value);
+		if (!new_envp[j])
+			malloc_error();
+		temp = temp->next;
+	}
+	new_envp[++j] = NULL;
+	return (new_envp);
+}
 
-*/
+static char	*copy_var(t_data *data, char *name, char *value)
+{
+	char	*env_str;
+	char	*eq;
+	size_t	len;
 
-
-/* 
-manipulate env:
-- 
-*/
+	(void)data;
+	len = ft_strlen(name) + ft_strlen(value) + 1;
+	env_str = (char *)ft_calloc(len + 1, sizeof(char));
+	if (!env_str)
+		malloc_error();
+	eq = "=";
+	ft_strlcpy(env_str, name, ft_strlen(name) + 1);
+	ft_strlcat(env_str, eq, ft_strlen(name) + ft_strlen(eq) + 1);
+	ft_strlcat(env_str, value, len + 1);
+	return (env_str);
+}

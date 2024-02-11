@@ -1,25 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   history.c                                          :+:      :+:    :+:   */
+/*   var_split.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/20 13:40:15 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/01/20 18:12:29 by ohladkov         ###   ########.fr       */
+/*   Created: 2024/01/20 13:41:22 by ohladkov          #+#    #+#             */
+/*   Updated: 2024/01/21 10:20:55 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
 
-void	create_history(t_data *data)
+char	**var_split(char *s, char c)
 {
-	const char	*str;
+	char			**res;
+	unsigned int	i;
 
-	str = data->input;
-	if (str)
-		add_history(str);
+	res = (char **)ft_calloc(2 + 1, sizeof(char *));
+	if (res == NULL)
+		return (NULL);
+	i = 0;
+	while (s[i] != c && s[i])
+		i++;
+	res[0] = ft_substr(s, 0, i);
+	if (res[0] == NULL)
+		return (res);
+	res[1] = ft_substr(s, i + 1, ft_strlen(s) - i - 1);
+	if (res[1] == NULL)
+		return (res);
+	res[2] = NULL;
+	return (res);
 }
-
-// https://www.math.utah.edu/docs/info/hist_2.html
-// https://stackoverflow.com/questions/38792542/readline-h-history-usage-in-c
