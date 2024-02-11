@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/03 16:06:19 by kdzhoha           #+#    #+#             */
-/*   Updated: 2024/02/11 13:47:57 by ohladkov         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "sh.h"
 
 int g_sig_status = 0; 
@@ -76,6 +64,8 @@ int	check_cmd(t_data *data, char **arr)
 	{
 		if (is_exit(data))
 			exit_handler(data);
+		if (is_exit(data))
+			exit_handler(data);
 	}
 	else if (ft_strncmp(temp, "export", ft_strlen(temp)) == 0)
 		export(data, arr);
@@ -84,6 +74,27 @@ int	check_cmd(t_data *data, char **arr)
 	else if (ft_strncmp(temp, "cd", ft_strlen(temp)) == 0)
 		cd_builtin(data, arr);
 	else
+		return (0);
+	return (res);
+}
+
+char	**expand_arr(char **arr, t_data *data)
+{
+	char	**res;
+	int		i;
+
+	i = 0;
+	while (arr[i])
+		i++;
+	res = (char **)malloc((i + 1) * sizeof(char *));
+	i = 0;
+	while (arr[i])
+	{
+		res[i] = expand_str(data, arr[i]);
+		i++;
+	}
+	res[i] = NULL;
+	return (res);
 		return (0);
 	return (res);
 }
@@ -142,10 +153,21 @@ static void	init_data(t_data *data)
 	data->cmd_nb = 0;
 	data->fd_inp = dup(STDIN_FILENO);
 	data->fd_outp = dup(STDOUT_FILENO);
+	data->cmd = NULL;
+	data->len = 0;
+	data->new_envp = NULL;
+	data->exit_c = NULL;
+	data->pipes_nb = 0;
+	data->cmd_nb = 0;
+	data->fd_inp = dup(STDIN_FILENO);
+	data->fd_outp = dup(STDOUT_FILENO);
 }
 
 void	minishell(t_data *data)
 {
+	t_command	*cmd;
+
+	cmd = NULL;
 	t_command	*cmd;
 
 	cmd = NULL;
@@ -183,7 +205,26 @@ void	minishell(t_data *data)
 		else
 		{
 			data->new_envp = new_envp(data);
+			data->new_envp = new_envp(data);
 			create_history(data);
+			cmd = parse_input(data);
+			data->cmd = cmd;
+			expand_input(data); // made new function to edit all parts of input
+			if (check_cmd(data, data->cmd->cmd) == 0)
+				process_command(data);
+			if (data->cmd)
+			{
+				free_command_lst(data->cmd);
+				data->cmd = NULL;
+				data->cmd_nb = 0;
+				data->pipe_fds = NULL;
+				data->pipes_nb = 0;
+			}
+			if (data->new_envp)
+			{
+				ft_free_arr(data->new_envp);
+				data->new_envp = NULL;
+			}
 			cmd = parse_input(data);
 			data->cmd = cmd;
 			expand_input(data); // made new function to edit all parts of input
@@ -208,6 +249,7 @@ void	minishell(t_data *data)
 
 int	main(int argc, char **argv, char **envp)
 {
+	t_data		*data;
 	t_data		*data;
 
 	(void)argv;
