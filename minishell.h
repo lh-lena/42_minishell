@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: kdzhoha <kdzhoha@student.42berlin.de >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/03 16:07:31 by kdzhoha           #+#    #+#             */
-/*   Updated: 2024/02/11 22:40:18 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/13 15:27:18 by kdzhoha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,6 @@ int			count_pipes(t_command *lst);
 int			execute(char **cmd, char *envp[]);
 char		**get_path(char *envp[]);
 char		*ft_strcat(char *str1, char *str2);
-void		read_heredoc(t_data *data, char *delim, int fd);
 char		*file_name(char *str);
 char		*get_delim(char *str);
 void		open_pipes(t_data *data);

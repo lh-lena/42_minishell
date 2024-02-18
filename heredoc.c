@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 15:42:14 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/11 22:33:58 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/17 15:03:32 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,34 +29,26 @@ void	read_heredoc(t_data *data, char *delim, int fd)
 	char	*input;
 
 	input = NULL;
-	signal(SIGINT, new_line_h);
 	while (1)
 	{
-		// rl_catch_signals = 0;
-		input = readline("> ");
-		// printf("g_sig_status : %d\n", g_sig_status);
 		if (g_sig_status == 1)
 		{
-			g_sig_status = 0;
+			data->exit_status = 130;
 			return ;
 		}
+		input = readline("> ");
 		if (!input)
 		{
 			printf("bash: warning: here-document delimited by end-of-file\
 (wanted `%s')\n", delim);
-			return ;
+			break ;
 		}
-		// if (*data->input == '\0')
-		// 	ft_putstr_fd("", 1);
-		// else if (is_whitespace_str(data->input))
-		// 	ft_putstr_fd("", 1);
 		if (ft_strncmp(input, delim, ft_strlen(input)) == 0)
 			break ;
 		input = edit_str_hd(data, input);
 		ft_putendl_fd(input, fd);
 		ft_free(&input);
 	}
-	// signal(SIGINT, SIG_DFL);
 	if (input)
 		free(input);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:37:24 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/11 22:41:13 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/12 11:52:51 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,6 @@ void	ft_delnode_env(t_env **lst, char *name)
 	if (cur == NULL)
 		return ;
 	prev->next = cur->next;
-	// printf("node to delete -> %s=%s\n", cur->name, cur->value); // delete
 	ft_free_node_env(cur);
 }
 

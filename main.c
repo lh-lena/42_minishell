@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/03 16:06:19 by kdzhoha           #+#    #+#             */
+/*   Updated: 2024/02/18 16:01:34 by ohladkov         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "sh.h"
 
-int g_sig_status = 0; 
+int g_sig_status = 0;
 
 void	print_result(t_command *cmd)
 {
@@ -33,7 +45,6 @@ void	execve_tr(t_data *data, char **arr)
 		return ;
 	val = 0;
 	temp = arr[0];
-	// signal(SIGQUIT, new_line);
 	if (ft_strncmp(temp, "pwd", ft_strlen(temp)) == 0)
 		pwd_cmd(data);
 	else if (ft_strncmp(temp, "echo", ft_strlen(temp)) == 0)
@@ -44,8 +55,7 @@ void	execve_tr(t_data *data, char **arr)
 		val = execute(arr, data->new_envp);
 	if (val == -1)
 	{
-		perror(arr[0]);
-		// printf("%s: command not found\n", arr[0]);
+		printf("%s: command not found\n", arr[0]);
 		exit(127);
 	}
 }
@@ -56,14 +66,12 @@ int	check_cmd(t_data *data, char **arr)
 	int		res;
 	char	*temp;
 
-	if (!arr || data->pipes_nb != 0)
+	if (!arr || data->pipes_nb != 0 || !*arr) // added !*arr
 		return (0);
 	res = 1;
 	temp = arr[0];
 	if (ft_strncmp(temp, "exit", ft_strlen(temp)) == 0)
 	{
-		if (is_exit(data))
-			exit_handler(data);
 		if (is_exit(data))
 			exit_handler(data);
 	}
@@ -74,27 +82,6 @@ int	check_cmd(t_data *data, char **arr)
 	else if (ft_strncmp(temp, "cd", ft_strlen(temp)) == 0)
 		cd_builtin(data, arr);
 	else
-		return (0);
-	return (res);
-}
-
-char	**expand_arr(char **arr, t_data *data)
-{
-	char	**res;
-	int		i;
-
-	i = 0;
-	while (arr[i])
-		i++;
-	res = (char **)malloc((i + 1) * sizeof(char *));
-	i = 0;
-	while (arr[i])
-	{
-		res[i] = expand_str(data, arr[i]);
-		i++;
-	}
-	res[i] = NULL;
-	return (res);
 		return (0);
 	return (res);
 }
@@ -153,14 +140,7 @@ static void	init_data(t_data *data)
 	data->cmd_nb = 0;
 	data->fd_inp = dup(STDIN_FILENO);
 	data->fd_outp = dup(STDOUT_FILENO);
-	data->cmd = NULL;
-	data->len = 0;
-	data->new_envp = NULL;
-	data->exit_c = NULL;
-	data->pipes_nb = 0;
-	data->cmd_nb = 0;
-	data->fd_inp = dup(STDIN_FILENO);
-	data->fd_outp = dup(STDOUT_FILENO);
+	data->pipe_fds = NULL; // added
 }
 
 void	minishell(t_data *data)
@@ -168,30 +148,27 @@ void	minishell(t_data *data)
 	t_command	*cmd;
 
 	cmd = NULL;
-	t_command	*cmd;
-
-	cmd = NULL;
 	while (1)
 	{
-		signal(SIGINT, new_line_c);
-		signal(SIGQUIT, SIG_IGN);
-		signal(SIGHUP, sig_handle); // let don't print ^C
 		data->input = readline("minishell$ ");
-		if (!data->input)
-		{
-			data->exit_status = 0;
-			exit_handler(data);
-		}
 		if (g_sig_status == 1)
 		{
-			data->exit_status = 130;
+			// Ctrl+C pressed and input not empty
 			g_sig_status = 0;
+			data->exit_status = 130;
+			if (*data->input != '\0')
+			{
+				ft_putstr_fd("", 1);
+				continue; // Skip processing the command
+			}
 		}
-		if (*data->input == '\0') // press ENTER - ok | TAB - ok | 
+		if (data->input == NULL)
+			exit_handler(data); // modified
+		// press ENTER - ok | TAB - ok | doesn't save in history
+		if (*data->input == '\0') 
 			ft_putstr_fd("", 1);
-		else if (is_whitespace_str(data->input)) // SPACE - ok | TODO as a function 
+		else if (is_whitespace_str(data->input))
 		{
-			data->exit_status = 0;
 			create_history(data);
 			ft_free(&data->input);
 			ft_putstr_fd("", 1);
@@ -204,12 +181,12 @@ void	minishell(t_data *data)
 		}
 		else
 		{
-			data->new_envp = new_envp(data);
-			data->new_envp = new_envp(data);
 			create_history(data);
-			cmd = parse_input(data);
+			data->new_envp = new_envp(data);
+			cmd = parse_input(data); // leak 00
+			// what if add function to handle lexical errors and so on
 			data->cmd = cmd;
-			expand_input(data); // made new function to edit all parts of input
+			expand_input(data);
 			if (check_cmd(data, data->cmd->cmd) == 0)
 				process_command(data);
 			if (data->cmd)
@@ -225,24 +202,7 @@ void	minishell(t_data *data)
 				ft_free_arr(data->new_envp);
 				data->new_envp = NULL;
 			}
-			cmd = parse_input(data);
-			data->cmd = cmd;
-			expand_input(data); // made new function to edit all parts of input
-			if (check_cmd(data, data->cmd->cmd) == 0)
-				process_command(data);
-			if (data->cmd)
-			{
-				free_command_lst(data->cmd);
-				data->cmd = NULL;
-				data->cmd_nb = 0;
-				data->pipe_fds = NULL;
-				data->pipes_nb = 0;
-			}
-			if (data->new_envp)
-			{
-				ft_free_arr(data->new_envp);
-				data->new_envp = NULL;
-			}
+			signals();
 		}
 	}
 }
@@ -250,13 +210,12 @@ void	minishell(t_data *data)
 int	main(int argc, char **argv, char **envp)
 {
 	t_data		*data;
-	t_data		*data;
 
 	(void)argv;
 	if (argc != 1)
 		return (0);
-	// if (isatty(STDIN_FILENO) != 1)
-	// 	return (1);
+	rl_catch_signals = 0;
+	signals();
 	data = (t_data *)malloc(sizeof(t_data));
 	if (!data)
 		malloc_error();

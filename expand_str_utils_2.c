@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_str_utils_2.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:35:53 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/11 22:40:44 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/12 11:54:07 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,13 @@ char	*copy_modified_str(t_data *data, char *str, size_t len)
 			copy_sqoutes(&temp_new, &str, data);
 		else if (*str == 34 && *str)
 			copy_dqoutes(&temp_new, &str, data);
-		else if (*str == '$' && (handle_name(*(str + 1)) || isvalid_var_name_char(*(str + 1))))
+		else if (*str == '$' && (handle_name(*(str + 1))\
+		|| isvalid_var_name_char(*(str + 1))))
 			substitute_vars(&temp_new, &str, data);
 		else if (*str == '\\' && *(str + 1) != '\\')
 			str++;
 		else
-		{
 			strptr_copy(&temp_new, &str);
-		}
 	}
 	*temp_new = '\0';
 	return (new);

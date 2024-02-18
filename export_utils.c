@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:37:01 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/11 22:41:38 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/14 13:47:32 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
+
+static int	count_qoutes(char **str, int c);
 
 int	isvalid_export_input(char *str)
 {
@@ -64,40 +66,42 @@ int	isvalid_var_name_char(int c)
 }
 
 // return 0 - if no quotes, -1 - if qouts don't close, 1 = ', 2 = "
-int	is_quotes(char *value)
+int is_quotes(char *value)
 {
-	int	i;
-	int	res;
-	int	size;
+	int		res;
+	char	*temp;
 
-	i = 0;
 	res = 0;
-	size = ft_strlen(value);
-	while (i < size && value[i])
+	temp = value;
+	while (*temp)
 	{
-		if (value[i] == 39)
+		if (*temp == 39)
 		{
-			i++;
-			res = 1;
-			while (value[i] != 39)
-			{
-				if (value[i] == '\0')
-					return (-1);
-				i++;
-			}
+			res = count_qoutes(&temp, 39);
 		}
-		else if (value[i] == 34)
+		else if (*temp == 34)
 		{
-			i++;
-			res = 2;
-			while (value[i] != 34)
-			{
-				if (value[i] == '\0')
-					return (-1);
-				i++;
-			}
+			res = count_qoutes(&temp, 34);
 		}
-		i++;
+		temp++;
+	}
+	return (res);
+}
+
+static int	count_qoutes(char **str, int c)
+{
+	int	res;
+
+	if (c == 39)
+		res = 1;
+	else if (c == 34)
+		res = 2;
+	*str = *str + 1;
+	while (**str != c)
+	{
+		if (**str == '\0')
+			return (-1);
+		*str = *str + 1;
 	}
 	return (res);
 }

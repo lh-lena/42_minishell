@@ -6,7 +6,7 @@
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 17:13:07 by kdzhoha           #+#    #+#             */
-/*   Updated: 2024/02/08 19:06:41 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/18 15:20:44 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,25 +22,29 @@ char	*copy_redir(t_tocken *tkn)
 
 	res = NULL;
 	ofset = 0;
-	str = tkn->begin;
-	size = tkn->end - tkn->begin;
+	str = tkn->begin; // "" // $37 = 0x4262e4 ">./test_files/invalid_permission <"
+	size = tkn->end - tkn->begin; // 0 // "<" - "" = 1
 	if (size > 2)
 	{
 		while (is_whitespace(str[ofset + 2]) && &str[ofset + 2] != tkn->end)
 			ofset++;
 	}
-	res = (char *)malloc((size - ofset + 1) * sizeof(char));
+	res = (char *)malloc((size - ofset + 1) * sizeof(char)); // Address 0x4b6bc12 is 0 bytes after a block of size 2 alloc'd
 	if (!res)
 		return (malloc_error());
 	i = 0;
 	while (i < 2)
 	{
-		res[i] = str[i];
+		res[i] = str[i]; // print res[i] $17 = 62 '>' $18 = 0 '\000' // $46 = 60 '<'
 		i++;
 	}
-	while (&str[i + ofset] != tkn->end)
+	//    $22 = 47 '/' (/test_files/invalid_permission)  $23 = 0x426304 " <" 
+	// res = ">./test_files/invalid_permission"  
+	//  $70 = 0 '\000' $69 = 0x426306 "" 
+	while ((&str[i + ofset] != tkn->end) && str[i + ofset]) // case: < it stucks here // added str[i + ofset]
 	{
-		res[i] = str[i + ofset];
+		// leak 04
+		res[i] = str[i + ofset]; // $53 = 33 '!' ??
 		i++;
 	}
 	res[i] = '\0';
@@ -101,14 +105,15 @@ char	**get_redir(t_tocken *lst)
 
 	cur = lst;
 	redir = create_arr_for(lst, 'r');
-	if (!redir)
+	if (!redir) // what if *redir == NULL
 		return (NULL);
+	// printf("get_redir %p -> %s\n", redir, *redir); // delete
 	i = 0;
 	while (cur && !is_pipe(cur))
 	{
 		if (is_redir(cur))
 		{
-			redir[i] = copy_redir(cur);
+			redir[i] = copy_redir(cur); // leak 03
 			i++;
 		}
 		cur = cur->next;
@@ -126,14 +131,14 @@ t_command	*create_cmd_node(t_tocken *lst)
 	cmd = get_command(lst);
 	// if (!cmd)
 	// 	return (NULL);
-	redir = get_redir(lst);
+	redir = get_redir(lst); // leak 02
 	res = (t_command *)malloc(sizeof(t_command));
 	if (!res)
 		return (malloc_error());
 	res->cmd = cmd;
 	res->redir = redir;
 	res->next = NULL;
-	return (res);
+	return (res); // res != NULL
 }
 
 t_command	*parse_input(t_data *data) //char *str)
@@ -148,7 +153,7 @@ t_command	*parse_input(t_data *data) //char *str)
 	if (!tockns)
 		return (NULL);
 	tockns_ptr = tockns;
-	cur = create_cmd_node(tockns);
+	cur = create_cmd_node(tockns); // leak 01
 	if (cur)
 	{
 		add_cmd(&res, cur);
@@ -171,9 +176,9 @@ t_command	*parse_input(t_data *data) //char *str)
 				data->cmd_nb++;
 			}
 		}
-		tockns = tockns->next;
+		tockns = tockns->next; // case: < // tockns->begin = "<" tockns->end = ""
 	}
 	//printf("number of pipes= %i\n", data->pipes_nb);
 	free_tockns_lst(tockns_ptr);
-	return (res);
+	return (res); // case: < //all pointed to NULL 
 }

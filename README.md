@@ -39,7 +39,7 @@ The goal of the project is to recreate a simplified version of a Unix shell, cap
 ### Installing and running the project:
 1. Clone the repository:
 ```C
-    git clone git@github.com:lh-lena/minishell.git minishell
+    git clone git@github.com:lh-lena/minishell.git
 ```
 2. Navigate to the project directory:
 ```C

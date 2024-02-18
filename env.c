@@ -6,7 +6,7 @@
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:35:43 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/03 14:04:55 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/18 15:31:48 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,13 @@ t_env	*ft_getenv(char **envp)
 		ft_lstadd_back_env(&env, new);
 		i++;
 	}
+	env_update_val(env, "_", "/usr/bin/env");
 	return (env);
 }
 
 void	env_print(t_data *data)
 {
 	data->exit_status = 0;
-	if (env_update_val(data->env_lst, "_", "/usr/bin/env") == 0)
-		perror("error var not found"); // delete
 	ft_print_lst_env(&data->env_lst, 0);
 }
 

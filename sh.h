@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sh.h                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:40:56 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/11 22:33:11 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/17 16:32:49 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@
 # include "minishell.h"
 # include "./libft/libft.h"
 
+# define ETX 0
+
 extern int g_sig_status;
 
 // str_utils
@@ -43,7 +45,8 @@ int		ft_isdigit_str(char *s);
 int		is_whitespace_str(char *str);
 void	str_copy(char *s1, char *s2);
 int		isspecial_char(int c);
-int		handle_name(int	c);
+int		handle_name(int c);
+int		is_ctrl_c(char *str);
 
 // arr_utils
 size_t	ft_arrsize(char	**arr);
@@ -81,7 +84,8 @@ void	create_history(t_data *data);
 // cd_cmd (Changes current working directory, updating PWD and OLDPWD | chdir)
 void	cd_builtin(t_data *data, char **arr);
 
-// echo -n (Prints arguments separated with a space followed by a new line| -n | write)
+/* echo -n (Prints arguments separated with a space followed
+by a new line| -n | write) */
 void	echo_builtin(t_data *data, char **arr);
 
 // export (Adds/replaces variable in environment)
@@ -125,8 +129,11 @@ int		is_exit(t_data *data);
 void	exit_handler(t_data *data);
 
 // -- handel signals -- Crtl+C Crtl+D Ctrl+'\'
-void	new_line_c(int sig_num);
-void	new_line_h(int sig_num);
+void	signals(void);
 void	sig_handle(int sig_num);
+void	manage_signal(void);
+void	sig_handle_child(int sig_num);
+void	signal_ignr(void);
+
 
 #endif

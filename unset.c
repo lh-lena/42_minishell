@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:41:14 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/11 22:37:07 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/12 12:02:39 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
 
-//    input[0]  [1]  [2]
-// unset var1 var2 var3
+/*    input[0]  [1]  [2]
+unset var1 var2 var3 */
 void	unset(t_data *data, char **input)
 {
 	int	i;
@@ -26,10 +26,3 @@ void	unset(t_data *data, char **input)
 			ft_delnode_env(&data->env_lst, input[i]);
 	}
 }
-
-/*
-https://www.ibm.com/docs/en/zos/2.2.0?topic=descriptions-unset-unset-values-attributes-variables-functions
-0 - Successful completion
-1 - Failure due to an incorrect command-line option
-2 - Failure due to an incorrect command-line argument
-*/

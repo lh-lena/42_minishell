@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   str_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/06 14:54:05 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/11 22:37:24 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/17 16:25:26 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,6 @@ int	ft_isdigit_str(char *s)
 	int	j;
 
 	j = 0;
-	if (!s)
-		return (0);
 	if (ft_issign(s[j]))
 	{
 		j++;
@@ -91,4 +89,18 @@ int	isspecial_char(int c)
 int	handle_name(int	c)
 {
 	return (c == '?');
+}
+
+int is_ctrl_c(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == (char)3)
+			return (1);
+		i++;
+	}
+	return (0);
 }
