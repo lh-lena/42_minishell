@@ -6,7 +6,7 @@
 /*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:36:40 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/11 22:36:37 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/15 22:13:59 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,27 +61,6 @@ static int	check_exit_arg(t_data *data, char *str)
 	return (i);
 }
 
-static int	check_exit_arg(t_data *data, char *str)
-{
-	int	i;
-	char	*tmp;
-
-	i = 0;
-	tmp = expand_str(data, str);
-	if (ft_isdigit_str(tmp))
-		data->exit_status = ft_calc_exit_status(tmp);
-	else
-	{
-		i = 1;
-		data->exit_status = 2;
-		ft_putstr_fd("exit\nbash: exit: ", 2);
-		ft_putstr_fd(str, 2);
-		ft_putendl_fd(": numeric argument required", 2);
-	}
-	free(tmp);
-	return (i);
-}
-
 static int	ft_calc_exit_status(char *str)
 {
 	int	code;
@@ -94,7 +73,6 @@ static int	ft_calc_exit_status(char *str)
 
 void	exit_handler(t_data *data)
 {
-	int		num;
 	int		num;
 
 	num = data->exit_status;

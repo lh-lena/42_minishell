@@ -49,7 +49,6 @@ void	new_line_h(int sig_num)
 	// write(1, "\n", 1);
 	// rl_on_new_line();
 	// rl_replace_line("", 0);
-	// ft_putstr_fd("minishell$ ", 1);
 	// rl_redisplay();
 	g_sig_status = 1;
 	ioctl(0, TIOCSTI, "\n");

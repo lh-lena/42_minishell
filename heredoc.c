@@ -6,7 +6,7 @@
 /*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 15:42:14 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/11 22:33:58 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/21 11:23:14 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	read_heredoc(t_data *data, char *delim, int fd)
 		{
 			printf("bash: warning: here-document delimited by end-of-file\
 (wanted `%s')\n", delim);
-			return ;
+			break ;
 		}
 		// if (*data->input == '\0')
 		// 	ft_putstr_fd("", 1);
@@ -64,7 +64,7 @@ void	read_heredoc(t_data *data, char *delim, int fd)
 static char	*edit_str_hd(t_data *data, char *str)
 {
 	char	*temp;
-
+	
 	temp = NULL;
 	if (ft_strchr(str, '$'))
 	{

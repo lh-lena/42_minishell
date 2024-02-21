@@ -33,7 +33,7 @@ void	execve_tr(t_data *data, char **arr)
 		return ;
 	val = 0;
 	temp = arr[0];
-	// signal(SIGQUIT, new_line);
+	// signal(SIGQUIT, SIG_IGN);
 	if (ft_strncmp(temp, "pwd", ft_strlen(temp)) == 0)
 		pwd_cmd(data);
 	else if (ft_strncmp(temp, "echo", ft_strlen(temp)) == 0)
@@ -44,8 +44,8 @@ void	execve_tr(t_data *data, char **arr)
 		val = execute(arr, data->new_envp);
 	if (val == -1)
 	{
-		perror(arr[0]);
-		// printf("%s: command not found\n", arr[0]);
+		// perror(arr[0]);
+		printf("%s: command not found\n", arr[0]);
 		exit(127);
 	}
 }
@@ -99,25 +99,6 @@ char	**expand_arr(char **arr, t_data *data)
 	return (res);
 }
 
-char	**expand_arr(char **arr, t_data *data)
-{
-	char	**res;
-	int		i;
-
-	i = 0;
-	while (arr[i])
-		i++;
-	res = (char **)malloc((i + 1) * sizeof(char *));
-	i = 0;
-	while (arr[i])
-	{
-		res[i] = expand_str(data, arr[i]);
-		i++;
-	}
-	res[i] = NULL;
-	return (res);
-}
-
 void	expand_input(t_data *data)
 {
 	char		**temp;
@@ -165,9 +146,6 @@ static void	init_data(t_data *data)
 
 void	minishell(t_data *data)
 {
-	t_command	*cmd;
-
-	cmd = NULL;
 	t_command	*cmd;
 
 	cmd = NULL;
@@ -249,7 +227,6 @@ void	minishell(t_data *data)
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_data		*data;
 	t_data		*data;
 
 	(void)argv;
