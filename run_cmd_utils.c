@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   run_cmd_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 15:35:16 by kdzhoha           #+#    #+#             */
-/*   Updated: 2024/02/11 22:38:26 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/18 14:48:17 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,11 @@ char	*get_delim(char *str)
 	int		i;
 
 	i = 2;
+	res = NULL;
 	while (is_whitespace(str[i]))
 		i++;
-	res = &str[i];
+	if (str[i])
+		res = &str[i]; // added
 	return (res);
 }
 
@@ -65,17 +67,16 @@ void	open_pipes(t_data *data)
 		i++;
 	}
 	data->pipe_fds = pp_fds;
-	// printf("pipe fds: %i, %i\n", data->pipe_fds[0][0], data->pipe_fds[0][1]); // delete
 	return ;
 }
 
 void	close_pipes(t_data *data, int indx)
 {
-	(void)indx;
 	int	**fds;
 	int	i;
 	int	j;
 
+	(void)indx;
 	if (!data->pipe_fds)
 		return ;
 	fds = data->pipe_fds;

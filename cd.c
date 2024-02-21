@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 18:17:34 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/15 22:13:30 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/19 13:09:14 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static int	check_dir(char *path);
 static void	tohome_dir(t_data *data);
-// static void	toprev_dir(t_data *data);
+static void	toprev_dir(t_data *data);
 static void	change_dir(t_data *data, char *path);
 
 void	cd_builtin(t_data *data, char **arr)
@@ -29,8 +29,8 @@ void	cd_builtin(t_data *data, char **arr)
 		tohome_dir(data);
 	else if (ft_strncmp(arr[1], "~", ft_strlen(arr[1])) == 0 && size == 2)
 		tohome_dir(data);
-	// else if (ft_strncmp(arr[1], "-", ft_strlen(arr[1])) == 0 && size == 2)
-	// 	toprev_dir(data);
+	else if (ft_strncmp(arr[1], "-", ft_strlen(arr[1])) == 0 && size == 2)
+		toprev_dir(data);
 	else if (check_dir(arr[1]) == 0)
 		put_error(data, "cd: No such file or directory", 1);
 	else if (size == 2)
@@ -71,20 +71,9 @@ static void	change_dir(t_data *data, char *path)
 		}
 		else
 			put_error(data, strerror(errno), 1);
-		new_pwd = getcwd(NULL, 0);
-		if (new_pwd)
-		{
-			env_update_val(data->env_lst, "PWD", new_pwd);
-			if (old_pwd)
-				env_update_val(data->env_lst, "OLDPWD", old_pwd);
-			else
-				put_error(data, strerror(errno), 1);
-		}
-		else
-			put_error(data, strerror(errno), 1);
 	}
 	else
-		put_error_arg(data, "bash: cd: ", path, strerror(errno), 1);
+		put_error(data, strerror(errno), 1);
 	ft_free(&old_pwd);
 	ft_free(&new_pwd);
 }
@@ -108,33 +97,31 @@ static void	tohome_dir(t_data *data)
 		}
 		else
 			put_error(data, strerror(errno), 1);
-		if (chdir(new_pwd) == 0)
-		{
-			env_update_val(data->env_lst, "PWD", new_pwd);
-			if (old_pwd)
-				env_update_val(data->env_lst, "OLDPWD", old_pwd);
-			else
-				put_error(data, strerror(errno), 1);
-		}
-		else
-			put_error(data, strerror(errno), 1);
 	}
 	else
 		put_error(data, "bash: cd: HOME not set", 1);
 	ft_free(&old_pwd);
 }
 
-/*
 static void	toprev_dir(t_data *data)
 {
 	char	*old_pwd;
 	char	*new_pwd;
 
-	if (current_directory != NULL) {
-	    printf("%s\n", current_directory);
-	    free(current_directory); // Free the memory allocated by getcwd
-	} else {
-	    perror("pwd");
+	old_pwd = env_var_value(data->env_lst, "OLDPWD");
+	new_pwd = getcwd(NULL, 0);
+	if (old_pwd != NULL)
+	{
+		if (chdir(old_pwd) == 0)
+		{
+			env_update_val(data->env_lst, "PWD", old_pwd);
+			if (new_pwd)
+				env_update_val(data->env_lst, "OLDPWD", new_pwd);
+			else
+				put_error(data, strerror(errno), 1);
+		}
 	}
+	else
+		put_error(data, strerror(errno), 1);
+	ft_free(&new_pwd);
 }
-*/

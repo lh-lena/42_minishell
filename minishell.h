@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/03 16:07:31 by kdzhoha           #+#    #+#             */
-/*   Updated: 2024/02/11 22:40:18 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/20 13:41:35 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ void		add_cmd(t_command **lst, t_command *node);
 void		free_tockns_lst(t_tocken *lst);
 int			is_pipe(t_tocken *tkn);
 int			is_redir(t_tocken *tkn);
+int			is_redir_str(char *str);
 void		*malloc_error(void);
 void		free_array(int **arr, int size);
 void		free_command_lst(t_command *cmd);
@@ -72,7 +73,6 @@ int			count_pipes(t_command *lst);
 int			execute(char **cmd, char *envp[]);
 char		**get_path(char *envp[]);
 char		*ft_strcat(char *str1, char *str2);
-void		read_heredoc(t_data *data, char *delim, int fd);
 char		*file_name(char *str);
 char		*get_delim(char *str);
 void		open_pipes(t_data *data);

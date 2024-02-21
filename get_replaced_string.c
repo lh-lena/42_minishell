@@ -6,7 +6,7 @@
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:37:10 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/03 14:00:20 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/12 11:56:37 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,14 +84,7 @@ static void	substitute_var(t_data *data, char **new, char **s, char *var_name)
 
 	len = 0;
 	*s = *s + 1;
-	if (**s == '$')
-	{
-		data->exit_c = ft_itoa((int)getpid());
-		str_copy(*new, data->exit_c);
-		*new = *new + ft_strlen(data->exit_c);
-		*s = *s + 1;
-	}
-	else if (**s == '?')
+	if (**s == '?')
 	{
 		data->exit_c = ft_itoa(data->exit_status);
 		str_copy(*new, data->exit_c);

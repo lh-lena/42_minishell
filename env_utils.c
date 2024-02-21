@@ -6,7 +6,7 @@
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:35:53 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/02 14:47:26 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/20 16:28:20 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,11 @@ size_t	env_isvar_name(t_env *envp, char *str)
 	if (!name)
 		return (0);
 	temp = envp;
+	if (ft_strncmp(temp->name, "$", 1) == 0)
+	{
+		free(name);
+		return (1);
+	}
 	while (temp != NULL)
 	{
 		if (ft_strncmp(temp->name, name, ft_strlen(temp->name)) == 0)
@@ -91,8 +96,6 @@ size_t	env_isvar_name(t_env *envp, char *str)
 			free(name);
 			if (ft_strlen(temp->value))
 				return (ft_strlen(temp->value));
-			else
-				return (1);
 		}
 		temp = temp->next;
 	}
@@ -110,7 +113,7 @@ char	*copy_var_name(char *str)
 		i++;
 	new = (char *)ft_calloc(i + 1, sizeof(char));
 	if (!new)
-		return (NULL);
+		malloc_error();
 	i = 0;
 	while (isvalid_var_name_char(str[i]) && str[i])
 	{

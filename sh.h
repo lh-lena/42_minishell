@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sh.h                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:40:56 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/11 22:33:11 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/20 14:43:20 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@
 # include "minishell.h"
 # include "./libft/libft.h"
 
+# define ETX 0
+
 extern int g_sig_status;
 
 // str_utils
@@ -43,13 +45,19 @@ int		ft_isdigit_str(char *s);
 int		is_whitespace_str(char *str);
 void	str_copy(char *s1, char *s2);
 int		isspecial_char(int c);
-int		handle_name(int	c);
+int		handle_name(int c);
+int		is_ctrl_c(char *str);
 
 // arr_utils
 size_t	ft_arrsize(char	**arr);
 size_t	ft_arrlen(char **arr);
 void	print_arr(char **arr);
 void	ft_free_arr(char **arr);
+
+// expand input
+void	expand_input(t_data *data);
+char	**expand_arr(char **arr, t_data *data);
+int	alloc_expand(char **arr, t_data *data);
 
 // list_utils
 t_env	*ft_new_node_env(char	*str);
@@ -66,7 +74,6 @@ void	ft_free(char **str);
 
 // error_handle
 void	put_error(t_data *data, char *msg, int er_num);
-void	put_error_arg(t_data *data, char *msg, char *arg, char *msg2, int er_n);
 
 // execute
 void	execve_tr(t_data *data, char **arr);
@@ -81,7 +88,8 @@ void	create_history(t_data *data);
 // cd_cmd (Changes current working directory, updating PWD and OLDPWD | chdir)
 void	cd_builtin(t_data *data, char **arr);
 
-// echo -n (Prints arguments separated with a space followed by a new line| -n | write)
+/* echo -n (Prints arguments separated with a space followed
+by a new line| -n | write) */
 void	echo_builtin(t_data *data, char **arr);
 
 // export (Adds/replaces variable in environment)
@@ -96,6 +104,7 @@ void	env_replace_or_create_node(t_env *envp, char *input);
 
 char	**get_var_name_arr(char *s, char c);
 char	**var_split(char *s, char c);
+int		ft_count_words(char *str, char c);
 
 // edit_qoutes_str
 char	*substitute_str(t_data *data, char *str);
@@ -125,8 +134,11 @@ int		is_exit(t_data *data);
 void	exit_handler(t_data *data);
 
 // -- handel signals -- Crtl+C Crtl+D Ctrl+'\'
-void	new_line_c(int sig_num);
-void	new_line_h(int sig_num);
+void	signals(void);
 void	sig_handle(int sig_num);
+void	manage_signal(void);
+void	sig_handle_child(int sig_num);
+void	signal_ignr(void);
+
 
 #endif

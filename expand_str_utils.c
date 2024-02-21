@@ -6,7 +6,7 @@
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:35:53 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/06 17:29:09 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/12 11:54:36 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static void		add_len_variable(t_data *data, char **str);
 char	*substitute_str(t_data *data, char *str)
 {
 	char	*new;
-	char 	*temp;
+	char	*temp;
 	size_t	len;
 
 	if (!str)

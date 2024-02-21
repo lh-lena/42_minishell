@@ -6,7 +6,7 @@
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 18:07:07 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/01/28 18:24:31 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/12 11:58:14 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,4 @@ void	ft_print_lst_env(t_env **lst, int arg)
 		temp = temp->next;
 		i++;
 	}
-	// to del
-	if (!lst)
-		printf("lst = NULL\n");
 }

@@ -3,42 +3,38 @@
 /*                                                        :::      ::::::::   */
 /*   run_command.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 13:58:58 by kdzhoha           #+#    #+#             */
-/*   Updated: 2024/02/11 22:38:12 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/19 14:22:21 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
 
-// Work in progress:
-static void	write_heredoc(t_data *data, char *str)
+static int	write_heredoc(t_data *data, char *str)
 {
-	//(void)data;
 	int		fd;
 
+	if (!str)
+	{
+		put_error(data, "bash: syntax error near unexpected token `newline'", 2);
+		return (-1); // added
+	}
 	if (access(".heredoc", F_OK) == 0)
 		unlink(".heredoc");
-	fd = open(".heredoc",  O_WRONLY | O_TRUNC | O_CREAT, 0777);
-	//write(fd, str, ft_strlen(str));
+	fd = open(".heredoc", O_WRONLY | O_TRUNC | O_CREAT, 0777);
 	read_heredoc(data, str, fd);
-	close(fd);
-	//return ;
+	if (g_sig_status == 1)
+	{
+		if (close(fd) != -1)
+			unlink(".heredoc");
+		return (-1);
+	}
+	if (close(fd) == -1)
+		return (1);
+	return (0);
 }
-
-// void	set_input_fd(int fd)
-// {
-// 	if (fd > 0)
-// 	{
-// 		if (dup2(fd, STDIN_FILENO) == -1)
-// 		{
-// 			put_error(data, "Invalid file descriptor", errno);
-// 			return ;
-// 		}
-// 		close(fd);
-// 	}
-// }
 
 void	set_input_fd(char **redir, int p_fd, t_data *data)
 {
@@ -55,15 +51,18 @@ void	set_input_fd(char **redir, int p_fd, t_data *data)
 				close(fd);
 			if (redir[i][1] == '<')
 			{
-				write_heredoc(data, get_delim(redir[i]));
-				fd = open(".heredoc", O_RDONLY);
+				if (write_heredoc(data, get_delim(redir[i])) != 0)
+					fd = -1;
+				else
+					fd = open(".heredoc", O_RDONLY);
 			}
 			else
 			{
 				fd = open(file_name(redir[i]), O_RDONLY);
 				if (fd < 0)
 				{
-					put_error(data, "File not found", errno);
+					// put_error(data, "File not found", errno);
+					put_error(data, "bash: No such file or directory", errno);
 					return ;
 				}
 			}
@@ -81,15 +80,6 @@ void	set_input_fd(char **redir, int p_fd, t_data *data)
 	}
 }
 
-// void	set_output_fd(int fd);
-// {
-// 	if (fd > 0)
-// 	{
-// 		dup2(fd, STDOUT_FILENO);
-// 		close(fd);
-// 	}
-// }
-
 void	set_output_fd(char **redir, int p_fd, t_data *data)
 {
 	int	fd;
@@ -105,16 +95,20 @@ void	set_output_fd(char **redir, int p_fd, t_data *data)
 				close(fd);
 			if (redir[i][1] == '>')
 			{
+				// printf("1set_output_fd; %s\n", redir[i]); // delete
 				fd = open(file_name(redir[i]), O_WRONLY | O_APPEND | O_CREAT, 0777);
+				// printf("2set_output_fd; %s\n", redir[i]); // delete
 				if (fd < 0)
 				{
 					put_error(data, "Invalid file name", errno);
 					return ;
-				}		
+				}
 			}
 			else
 			{
+				// printf("3set_output_fd; %s\n", redir[i]); // delete
 				fd = open(file_name(redir[i]), O_WRONLY | O_TRUNC | O_CREAT, 0777);
+				// printf("4set_output_fd; %s\n", redir[i]); // delete
 				if (fd < 0)
 				{
 					put_error(data, "Invalid file name", errno);
@@ -154,13 +148,21 @@ void	run_command(t_command *cmd, pid_t *pr_id, t_data *data, int i)
 	if (data->pipes_nb > i)
 		fd_out = data->pipe_fds[i][1];
 	set_output_fd(cmd->redir, fd_out, data);
+	if (cmd->cmd == NULL || g_sig_status == 1)
+	{
+		g_sig_status = 0; // added
+		*pr_id = 0;
+		restore_fds(data);
+		return ;
+	}
+	signal_ignr();
 	*pr_id = fork();
 	if (*pr_id == 0)
 	{
+		manage_signal();
 		close_pipes(data, -1);
 		if (cmd->cmd)
 			execve_tr(data, cmd->cmd);
-		//check_cmd(data, cmd->cmd);
 		exit(EXIT_SUCCESS);
 	}
 	else
@@ -176,8 +178,11 @@ void	process_command(t_data *data)
 	t_command	*cur;
 	int			i;
 	int			status;
+	int			j;
 
 	i = 0;
+	j = 0;
+	status = -1;
 	if (data->pipes_nb)
 		open_pipes(data);
 	cur = data->cmd;
@@ -190,65 +195,26 @@ void	process_command(t_data *data)
 	close_pipes(data, -1);
 	free_array(data->pipe_fds, data->pipes_nb);
 	i = 0;
-	status = -1;
 	while (i < data->cmd_nb)
 	{
-		// signal(SIGINT, SIG_IGN);
-		// signal(SIGQUIT, SIG_IGN);
-		if (errno == ECHILD)
-			printf("errno == ECHILD\n");
-		if (waitpid(pr_id[i], &status, 0) == -1)
-		{
-			// data->exit_status = 130;
-			// printf("waitpid == -1\n");
-		}
-		// printf("status: %d\n", status);
-		// printf("WEXITSTATUS(status): %d\n", WEXITSTATUS(status));
-		// printf("WIFEXITED(status): %d\n", WIFEXITED(status));
-		// printf("WIFSIGNALED(status): %d\n", WIFSIGNALED(status));
+		if (pr_id[i] > 0)
+			waitpid(pr_id[i], &status, 0);
+		if (status < 0)
+			break ;
 		if (WIFEXITED(status))
-		{
-			// printf("data->exit_status = WEXITSTATUS(status)\n");
 			data->exit_status = WEXITSTATUS(status);
-		}
 		else if (WIFSIGNALED(status))
 		{
-			// printf("WTERMSIG(status): %d\n", WTERMSIG(status));
 			data->exit_status = 128 + WTERMSIG(status);
-		}
-		else
-		{
-			printf("else here\n");
-			data->exit_status = 130;
+			if ((WTERMSIG(status) == 2 || WTERMSIG(status) == 3) && j == 0)
+			{
+				j = 1;
+				write(1, "\n", 1);
+			}
+			g_sig_status = 0;
 		}
 		i++;
 	}
 	if (access(".heredoc", F_OK) == 0)
 		unlink(".heredoc");
 }
-
-// void	run_command(t_command *cmd, pid_t *pr_id, t_data *data, int i)
-// {
-// 	int		fd_in;
-// 	int		fd_out;
-
-// 	fd_in = -1;
-// 	fd_out = -1;
-// 	*pr_id = fork();
-// 	if (*pr_id == 0)
-// 	{
-// 		if (i > 0)
-// 			fd_in = data->pipe_fds[i - 1][0];
-// 		set_input_fd(cmd->redir, fd_in, data);
-// 		if (data->pipes_nb > i)
-// 			fd_out = data->pipe_fds[i][1];
-// 		set_output_fd(cmd->redir, fd_out, data);
-// 		close_pipes(data, -1);
-// 		if (cmd->cmd)
-// 			execve_tr(data, cmd->cmd);
-// 		//check_cmd(data, cmd->cmd);
-// 		exit(0);
-// 	}
-// 	else
-// 		return ;
-// }

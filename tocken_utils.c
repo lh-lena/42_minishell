@@ -6,7 +6,7 @@
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/12 15:35:18 by kdzhoha           #+#    #+#             */
-/*   Updated: 2024/02/08 18:51:54 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/20 13:41:23 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,11 @@ int	is_redir(t_tocken *tkn)
 	if (str[i] == '<' || str[i] == '>')
 		return (1);
 	return (0);
+}
+
+int	is_redir_str(char *str)
+{
+	return (str[0] == '<' || str[0] == '>');
 }
 
 void	free_tockns_lst(t_tocken *lst)
