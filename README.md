@@ -51,7 +51,7 @@ The goal of the project is to recreate a simplified version of a Unix shell, cap
 ```
 4. Run the Minishell: 
 ```C
-    ./minishell
+    ./minishell or make run
 ```
 
 # Makefile Available Targets:
@@ -59,6 +59,7 @@ The goal of the project is to recreate a simplified version of a Unix shell, cap
 - `make clean` - wipes all object files
 - `make fclean` - deletes minishell and all object files
 - `make re` - fclean + all
+- `make run` - allows project execution without memory leak caused by readline
 
 # Common Instructions
 - The project must be written in C

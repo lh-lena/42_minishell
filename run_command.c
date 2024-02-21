@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   run_command.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 13:58:58 by kdzhoha           #+#    #+#             */
-/*   Updated: 2024/02/19 14:22:21 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/21 16:52:30 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,8 +199,9 @@ void	process_command(t_data *data)
 	{
 		if (pr_id[i] > 0)
 			waitpid(pr_id[i], &status, 0);
-		if (status < 0)
-			break ;
+		// printf("%d\n", status);
+		// if (status < 0)
+		// 	break ;
 		if (WIFEXITED(status))
 			data->exit_status = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_replaced_string.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:37:10 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/12 11:56:37 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/21 12:07:51 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ char	*get_replaced_str(t_data *data, char *s)
 	i = -1;
 	value_len = 0;
 	while (var_names[++i])
-		value_len += env_isvar_name(data->env_lst, var_names[i]);
+		value_len += env_isvar_name(data->env_lst, var_names[i]); // change for $?
 	new = replace_var_value(data, s, var_names, value_len);
 	ft_free_arr(var_names);
 	return (new);

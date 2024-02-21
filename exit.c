@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:36:40 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/12 12:08:18 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/21 11:34:26 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void	exit_handler(t_data *data)
 	int		num;
 
 	num = data->exit_status;
-	rl_clear_history();
+	clear_history();
 	if (data)
 		ft_free_data(data);
 	ft_putendl_fd("exit", 2);

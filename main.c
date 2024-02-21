@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/03 16:06:19 by kdzhoha           #+#    #+#             */
-/*   Updated: 2024/02/20 16:42:53 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/21 11:37:31 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,107 +84,6 @@ int	check_cmd(t_data *data, char **arr)
 	else
 		return (0);
 	return (res);
-}
-
-int	alloc_expand(char **arr, t_data *data)
-{
-	int		size;
-	int		i;
-	char	*tmp;
-	char	**temp;
-
-	size = 0;
-	i = 0;
-	tmp = NULL;
-	temp = arr;
-	while (arr[i])
-	{
-		if (is_quotes(temp[i]) == 0 && ft_strchr(temp[i], '$'))
-		{
-			tmp = get_replaced_str(data, temp[i]);
-			printf("tmp: %s\n", tmp);
-			size += ft_count_words(tmp, 32);
-			ft_free(&tmp);
-		}
-		else
-			size++;
-		i++;
-	}
-	return (size);
-}
-
-char	**expand_arr(char **arr, t_data *data)
-{
-	char	**res;
-	char	*str;
-	char	**temp;
-	int		i;
-	int		j;
-	int		k;
-
-	i = alloc_expand(arr, data);
-	printf("i = %d\n", i);
-	res = (char **)malloc((i + 1) * sizeof(char *));
-	i = 0;
-	j = 0;
-	k = 0;
-	str = NULL;
-	temp = NULL;
-	while (arr[i])
-	{
-		j = is_quotes(arr[i]);
-		str = expand_str(data, arr[i]);
-		printf("str: %s\n", str);
-		if (j == 0 && ft_count_words(str, 32) > 1 && !is_redir_str(str))
-		{
-			temp = ft_split(str, 32);
-			while (j < ft_count_words(str, 32))
-			{
-				res[k] = ft_strdup(temp[j]);
-				k++;
-				j++;
-			}
-			ft_free_arr(temp);
-		}
-		else if (ft_count_words(str, 32) > 1 && is_redir_str(str))
-		{
-			printf("bash: %s: ambiguous redirect\n", ft_strchr(arr[i], 36));
-			return (NULL);
-		}
-		else
-		{
-			res[k] = ft_strdup(str);
-			k++;
-		}
-		ft_free(&str);
-		i++;
-	}
-	res[k] = NULL;
-	return (res);
-}
-
-void	expand_input(t_data *data)
-{
-	char		**temp;
-	t_command	*cur;
-
-	cur = data->cmd;
-	while (cur)
-	{
-		if (cur->cmd)
-		{
-			temp = cur->cmd;
-			cur->cmd = expand_arr(temp, data);
-			ft_free_arr(temp);
-		}
-		if (cur->redir)
-		{
-			temp = cur->redir;
-			cur->redir = expand_arr(temp, data);
-			ft_free_arr(temp);
-		}
-		cur = cur->next;
-	}
 }
 
 static void	init_data(t_data *data)
@@ -269,7 +168,7 @@ int	main(int argc, char **argv, char **envp)
 	(void)argv;
 	if (argc != 1)
 		return (0);
-	rl_catch_signals = 0;
+	// rl_catch_signals = 0;
 	signals();
 	data = (t_data *)malloc(sizeof(t_data));
 	if (!data)

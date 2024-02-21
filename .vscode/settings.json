@@ -58,6 +58,7 @@
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
   "files.associations": {
     "type_traits": "c",
-    "sh.h": "c"
+    "sh.h": "c",
+    "readline.h": "c"
   }
 }
