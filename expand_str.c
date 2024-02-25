@@ -6,7 +6,7 @@
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:35:53 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/06 17:05:45 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/22 15:33:47 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,7 @@ char	*expand_str(t_data *data, char *input)
 	char	*temp_new;
 
 	temp_new = NULL;
-	if (is_quotes(input) == 1 || is_quotes(input) == 2 || \
-	ft_strchr(input, '$') || ft_strchr(input, '\\'))
+	if (is_quotes(input) || ft_strchr(input, '$') || ft_strchr(input, '\\'))
 	{
 		temp_new = substitute_str(data, input);
 		if (!temp_new)

@@ -6,7 +6,7 @@
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/06 14:54:05 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/19 18:00:08 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/25 12:07:46 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,14 @@ int	ft_issign(int c)
 	return (0);
 }
 
+int	is_whitespace(char c)
+{
+	if (c == 32 || (c >= 9 && c <= 13))
+		return (1);
+	else
+		return (0);
+}
+
 int	is_whitespace_str(char *str)
 {
 	int	i;
@@ -67,59 +75,4 @@ int	is_whitespace_str(char *str)
 		i++;
 	}
 	return (1);
-}
-
-void	str_copy(char *s1, char *s2)
-{
-	if (!s2 || *s2 == '\0')
-		return ;
-	while (*s2)
-	{
-		*s1 = *s2;
-		s1++;
-		s2++;
-	}
-}
-
-int	isspecial_char(int c)
-{
-	return (c == 34 || c == 36 || c == 92 || c == 96);
-}
-
-int	handle_name(int	c)
-{
-	return (c == '?');
-}
-
-int is_ctrl_c(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == (char)3)
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
-int	ft_count_words(char *str, char c)
-{
-	int		nb;
-	char	*s;
-
-	s = (char *)str;
-	nb = 0;
-	while (*s != '\0')
-	{
-		if (*s != c)
-			nb++;
-		while (*s != c && *s != '\0')
-			s++;
-		while (*s == c && *s != '\0')
-			s++;
-	}
-	return (nb);
 }

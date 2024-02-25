@@ -6,7 +6,7 @@
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:35:53 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/12 11:54:36 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/22 11:57:08 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ static void	add_len_variable(t_data *data, char **str)
 	}
 	else
 	{
-		data->len += env_isvar_name(data->env_lst, *str);
+		data->len += env_isvar_name(data, *str);
 		while (isvalid_var_name_char(**str))
 			*str = *str + 1;
 	}

@@ -6,7 +6,7 @@
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/12 15:35:18 by kdzhoha           #+#    #+#             */
-/*   Updated: 2024/02/20 13:41:23 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/25 12:11:01 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,45 +23,6 @@ t_tocken	*new_tocken(void)
 	new->end = NULL;
 	new->next = NULL;
 	return (new);
-}
-
-t_tocken	*get_tockens(char *str)
-{
-	t_tocken	*res;
-	t_tocken	*cur;
-	t_tocken	*new;
-	int			i;
-
-	res = NULL;
-	i = 0;
-	while (str[i])
-	{
-		if (is_whitespace(str[i]))
-			i++;
-		else
-		{
-			new = new_tocken();
-			new->begin = &str[i];
-			if (str[i] == '|')
-				i++;
-			else
-				i = i + find_next_del(&str[i]);
-			new->end = (&str[i]);
-			// write (1, new->begin, 2);
-			// write (1, "\n", 1);
-			if (!res)
-			{
-				res = new;
-				cur = new;
-			}
-			else
-			{
-				cur->next = new;
-				cur = cur->next;
-			}
-		}
-	}
-	return (res);
 }
 
 int	is_pipe(t_tocken *tkn)

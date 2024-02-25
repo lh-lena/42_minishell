@@ -6,7 +6,7 @@
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:41:14 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/12 12:02:39 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/22 11:56:39 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	unset(t_data *data, char **input)
 	i = 0;
 	while (input[++i])
 	{
-		if (env_isvar_name(data->env_lst, input[i]))
+		if (env_isvar_name(data, input[i]))
 			ft_delnode_env(&data->env_lst, input[i]);
 	}
 }

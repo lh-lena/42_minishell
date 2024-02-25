@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:35:53 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/21 11:56:54 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/22 11:57:31 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,22 +73,19 @@ char	*env_var_value(t_env *envp, char *str)
 }
 
 // if there is var in the envp, return len of its value, otherwise 0
-size_t	env_isvar_name(t_env *envp, char *str)
+size_t	env_isvar_name(t_data *data, char *str)
 {
 	t_env	*temp;
 	char	*name;
 
 	if (!str)
 		return (0);
+	if (*str == '?')
+		return (exit_len(data));
 	name = copy_var_name(str);
 	if (!name)
 		return (0);
-	temp = envp;
-	if (ft_strncmp(temp->name, "$", 1) == 0)
-	{
-		free(name);
-		return (1);
-	}
+	temp = data->env_lst;
 	while (temp != NULL)
 	{
 		if (ft_strncmp(temp->name, name, ft_strlen(temp->name)) == 0)
@@ -113,7 +110,7 @@ char	*copy_var_name(char *str)
 		i++;
 	new = (char *)ft_calloc(i + 1, sizeof(char));
 	if (!new)
-		malloc_error();
+		return (NULL);
 	i = 0;
 	while (isvalid_var_name_char(str[i]) && str[i])
 	{

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:36:40 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/21 11:34:26 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/25 16:39:45 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,11 @@
 static int	ft_calc_exit_status(char *str);
 static int	check_exit_arg(t_data *data, char *str);
 
-int	is_exit(t_data *data)
+int	is_exit(t_data *data, char **arr)
 {
-	char	**arr;
 	int		size;
 	int		i;
 
-	arr = ft_split(data->input, ' ');
 	if (!arr)
 		malloc_error();
 	size = ft_arrsize(arr);
@@ -34,7 +32,6 @@ int	is_exit(t_data *data)
 		data->exit_status = 1;
 		ft_putendl_fd("exit\nbash: exit: too many arguments", 2);
 	}
-	ft_free_arr(arr);
 	return (i);
 }
 
@@ -51,7 +48,9 @@ static int	check_exit_arg(t_data *data, char *str)
 	{
 		i = 1;
 		data->exit_status = 2;
-		ft_putstr_fd("exit\nbash: exit: ", 2);
+		if (data->pipes_nb == 0)
+			ft_putendl_fd("exit", 2);
+		ft_putstr_fd("bash: exit: ", 2);
 		ft_putstr_fd(str, 2);
 		ft_putendl_fd(": numeric argument required", 2);
 	}
@@ -74,9 +73,19 @@ void	exit_handler(t_data *data)
 	int		num;
 
 	num = data->exit_status;
-	clear_history();
+	rl_clear_history();
 	if (data)
-		ft_free_data(data);
+		ft_free_on_exit(data);
 	ft_putendl_fd("exit", 2);
 	exit(num);
+}
+
+size_t	exit_len(t_data *data)
+{
+	size_t	len;
+
+	data->exit_c = ft_itoa(data->exit_status);
+	len = ft_strlen(data->exit_c);
+	ft_free(&data->exit_c);
+	return (len);
 }

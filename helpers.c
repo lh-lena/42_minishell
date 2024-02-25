@@ -3,22 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   helpers.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kdzhoha <kdzhoha@student.42berlin.de >     +#+  +:+       +#+        */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 17:17:58 by kdzhoha           #+#    #+#             */
-/*   Updated: 2024/01/26 17:27:59 by kdzhoha          ###   ########.fr       */
+/*   Updated: 2024/02/25 12:05:43 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	is_whitespace(char c)
-{
-	if (c == 32 || (c >= 9 && c <= 13))
-		return (1);
-	else
-		return (0);
-}
 
 int	skip_spaces(char *str)
 {
@@ -33,25 +25,34 @@ int	skip_spaces(char *str)
 	return (i);
 }
 
+int	next_quotes(char *str, char c)
+{
+	int	i;
+
+	i = 1;
+	while (str[i] != c && str[i] != '\0')
+		i++;
+	if (str[i] != '\0')
+		i++;
+	return (i);
+}
+
 int	find_next_del(char *str)
 {
 	int		i;
-	char	c;
 
 	i = 0;
 	while (!is_whitespace(str[i]) && str[i] != '\0')
 	{
 		if (str[i] == 34 || str[i] == 39)
-		{
-			c = str[i];
-			i++;
-			while (str[i] != c && str[i] != '\0')
-				i++;
-			if (str[i] != '\0')
-				i++;
-		}
+			i = i + next_quotes(&str[i], str[i]);
 		else if (str[i] == '<' || str[i] == '>')
-			i = i + skip_spaces(&str[i]);
+		{
+			if (i == 0)
+				i = i + skip_spaces(&str[i]);
+			else
+				return (i);
+		}
 		else if (str[i] == '|')
 			return (i);
 		else

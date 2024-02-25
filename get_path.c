@@ -6,7 +6,7 @@
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/14 15:30:07 by kdzhoha           #+#    #+#             */
-/*   Updated: 2024/02/08 19:19:43 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/25 12:15:13 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,18 +94,3 @@ char	**get_path(char *envp[])
 	}
 	return (path);
 }
-
-// void	ft_free(char **ptrs)
-// {
-// 	int	i;
-
-// 	if (!ptrs)
-// 		return ;
-// 	i = 0;
-// 	while (ptrs[i])
-// 	{
-// 		free(ptrs[i]);
-// 		i++;
-// 	}
-// 	free(ptrs);
-// }

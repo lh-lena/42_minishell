@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_replaced_string.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:37:10 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/21 12:07:51 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/22 11:56:49 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ char	*get_replaced_str(t_data *data, char *s)
 	i = -1;
 	value_len = 0;
 	while (var_names[++i])
-		value_len += env_isvar_name(data->env_lst, var_names[i]); // change for $?
+		value_len += env_isvar_name(data, var_names[i]);
 	new = replace_var_value(data, s, var_names, value_len);
 	ft_free_arr(var_names);
 	return (new);
@@ -93,7 +93,7 @@ static void	substitute_var(t_data *data, char **new, char **s, char *var_name)
 	}
 	else if (isvalid_var_name_char(**s))
 	{
-		len = env_isvar_name(data->env_lst, var_name);
+		len = env_isvar_name(data, var_name);
 		str_copy(*new, env_var_value(data->env_lst, var_name));
 		*new = *new + len;
 		*s = *s + ft_strlen(var_name);

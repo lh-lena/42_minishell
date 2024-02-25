@@ -7,7 +7,9 @@ SRCS	= main.c arr_utils.c cd.c cmd_utils.c expand_str.c expand_str_utils.c  \
 			get_var_name_arr.c export_utils.c export.c free.c \
 			helpers.c history.c list_utils.c parse_input.c str_utils.c \
 			tocken_utils.c var_split.c unset.c pwd.c execute.c get_path.c \
-			heredoc.c run_command.c run_cmd_utils.c expand_input.c
+			heredoc.c run_command.c run_cmd_utils.c expand_input.c free_env.c \
+			get_tokens.c str_utils2.c parse_input_utils.c run_cmd_utils2.c \
+
 
 LIBFT	= libft
 OBJS	= $(SRCS:.c=.o)
@@ -15,10 +17,8 @@ OBJS	= $(SRCS:.c=.o)
 all:	$(NAME)
 $(NAME): $(OBJS)
 		@make -C $(LIBFT)
-		$(CC) $(CFLAGS) $(OBJS) -L./$(LIBFT) -lft -lreadline -g -fsanitize=address -o $(NAME)
-#-fsanitize=address
-run:
-	valgrind --suppressions=suppressions.supp --leak-check=full --show-leak-kinds=all --child-silent-after-fork=yes ./minishell
+		$(CC) $(CFLAGS) $(OBJS) -L./$(LIBFT) -lft -lreadline -o $(NAME)
+
 clean:
 	rm -rf $(OBJS)
 	rm -rf $(LIBFT)/*.o

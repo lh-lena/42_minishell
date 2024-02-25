@@ -6,23 +6,34 @@
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 15:42:14 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/17 15:03:32 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/25 17:20:42 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
 
-//void	read_heredoc(t_data *data, char *delim, int fd);
 static char	*edit_str_hd(t_data *data, char *str);
 
-// void	heredoc(t_data *data, char *delim)
-// {
-// 	int	fd;
+int	write_heredoc(t_data *data, char *str)
+{
+	int		fd;
 
-// 	fd = open(data->heredoc, O_WRONLY | O_TRUNC | O_CREAT, 0777);
-// 	read_heredoc(data, delim, fd);
-// 	close(fd);
-// }
+	if (access(".heredoc", F_OK) == 0)
+		unlink(".heredoc");
+	fd = open(".heredoc", O_WRONLY | O_TRUNC | O_CREAT, 0777);
+	data->exit_status = 0;
+	read_heredoc(data, str, fd);
+	if (g_sig_status == 1)
+	{
+		g_sig_status = 0;
+		if (close(fd) != -1)
+			unlink(".heredoc");
+		return (-1);
+	}
+	if (close(fd) == -1)
+		return (1);
+	return (0);
+}
 
 void	read_heredoc(t_data *data, char *delim, int fd)
 {
@@ -41,7 +52,7 @@ void	read_heredoc(t_data *data, char *delim, int fd)
 		{
 			printf("bash: warning: here-document delimited by end-of-file\
 (wanted `%s')\n", delim);
-			break ;
+			return ;
 		}
 		if (ft_strncmp(input, delim, ft_strlen(input)) == 0)
 			break ;

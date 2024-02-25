@@ -6,121 +6,11 @@
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 17:13:07 by kdzhoha           #+#    #+#             */
-/*   Updated: 2024/02/18 15:20:44 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/25 17:26:15 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
-
-char	*copy_redir(t_tocken *tkn)
-{
-	int		i;
-	int		ofset;
-	int		size;
-	char	*str;
-	char	*res;
-
-	res = NULL;
-	ofset = 0;
-	str = tkn->begin; // "" // $37 = 0x4262e4 ">./test_files/invalid_permission <"
-	size = tkn->end - tkn->begin; // 0 // "<" - "" = 1
-	if (size > 2)
-	{
-		while (is_whitespace(str[ofset + 2]) && &str[ofset + 2] != tkn->end)
-			ofset++;
-	}
-	res = (char *)malloc((size - ofset + 1) * sizeof(char)); // Address 0x4b6bc12 is 0 bytes after a block of size 2 alloc'd
-	if (!res)
-		return (malloc_error());
-	i = 0;
-	while (i < 2)
-	{
-		res[i] = str[i]; // print res[i] $17 = 62 '>' $18 = 0 '\000' // $46 = 60 '<'
-		i++;
-	}
-	//    $22 = 47 '/' (/test_files/invalid_permission)  $23 = 0x426304 " <" 
-	// res = ">./test_files/invalid_permission"  
-	//  $70 = 0 '\000' $69 = 0x426306 "" 
-	while ((&str[i + ofset] != tkn->end) && str[i + ofset]) // case: < it stucks here // added str[i + ofset]
-	{
-		// leak 04
-		res[i] = str[i + ofset]; // $53 = 33 '!' ??
-		i++;
-	}
-	res[i] = '\0';
-	return (res);
-}
-
-char	*copy_content(t_tocken *tkn)
-{
-	int		i;
-	int		size;
-	char	*str;
-	char	*res;
-
-	str = tkn->begin;
-	size = tkn->end - tkn->begin;
-	res = (char *)malloc((size + 1) * sizeof(char));
-	if (!res)
-		return (malloc_error());
-	i = 0;
-	while (&str[i] != tkn->end)
-	{
-		res[i] = str[i];
-		i++;
-	}
-	res[i] = '\0';
-	return (res);
-}
-
-char	**get_command(t_tocken *lst)
-{
-	int			i;
-	t_tocken	*cur;
-	char		**cmd;
-
-	cur = lst;
-	cmd = create_arr_for(lst, 'c');
-	if (!cmd)
-		return (NULL);
-	i = 0;
-	while (cur && !is_pipe(cur))
-	{
-		if (!is_redir(cur))
-		{
-			cmd[i] = copy_content(cur);
-			i++;
-		}
-		cur = cur->next;
-	}
-	cmd[i] = NULL;
-	return (cmd);
-}
-
-char	**get_redir(t_tocken *lst)
-{
-	char		**redir;
-	int			i;
-	t_tocken	*cur;
-
-	cur = lst;
-	redir = create_arr_for(lst, 'r');
-	if (!redir) // what if *redir == NULL
-		return (NULL);
-	// printf("get_redir %p -> %s\n", redir, *redir); // delete
-	i = 0;
-	while (cur && !is_pipe(cur))
-	{
-		if (is_redir(cur))
-		{
-			redir[i] = copy_redir(cur); // leak 03
-			i++;
-		}
-		cur = cur->next;
-	}
-	redir[i] = NULL;
-	return (redir);
-}
+#include "sh.h"
 
 t_command	*create_cmd_node(t_tocken *lst)
 {
@@ -128,23 +18,76 @@ t_command	*create_cmd_node(t_tocken *lst)
 	char		**cmd;
 	char		**redir;
 
+	res = NULL;
 	cmd = get_command(lst);
-	// if (!cmd)
-	// 	return (NULL);
-	redir = get_redir(lst); // leak 02
+	redir = get_redir(lst);
+	if (!cmd && !redir)
+		return (NULL);
 	res = (t_command *)malloc(sizeof(t_command));
 	if (!res)
 		return (malloc_error());
 	res->cmd = cmd;
 	res->redir = redir;
 	res->next = NULL;
-	return (res); // res != NULL
+	return (res);
 }
 
-t_command	*parse_input(t_data *data) //char *str)
+int	check_redir(t_tocken *tkn)
+{
+	int		size;
+	char	*str;
+
+	str = tkn->begin;
+	size = tkn->end - tkn->begin;
+	if (size < 2)
+		return (-1);
+	if (size == 2 && str[0] == str[1])
+		return (-1);
+	if (str[0] == str[1])
+		str++;
+	str++;
+	while (is_whitespace(*str) && str != tkn->end)
+		str++;
+	if (str == tkn->end)
+		return (-1);
+	return (0);
+}
+
+int	check_syntax(t_data *data, t_tocken *tkn)
+{
+	t_tocken	*cur;
+
+	(void)data;
+	if (is_pipe(tkn))
+		return (-1);
+	cur = tkn;
+	while (cur && !is_pipe(cur))
+	{
+		if (is_redir(cur))
+		{
+			if (check_redir(cur) == -1)
+				return (-1);
+		}
+		cur = cur->next;
+	}
+	return (0);
+}
+
+void	create_add_cmd(t_command **res, t_data *data, t_tocken *tockns)
+{
+	t_command	*cur;
+
+	cur = create_cmd_node(tockns);
+	if (cur)
+	{
+		add_cmd(res, cur);
+		data->cmd_nb++;
+	}
+}
+
+t_command	*parse_input(t_data *data)
 {
 	t_command	*res;
-	t_command	*cur;
 	t_tocken	*tockns;
 	t_tocken	*tockns_ptr;
 
@@ -153,32 +96,20 @@ t_command	*parse_input(t_data *data) //char *str)
 	if (!tockns)
 		return (NULL);
 	tockns_ptr = tockns;
-	cur = create_cmd_node(tockns); // leak 01
-	if (cur)
-	{
-		add_cmd(&res, cur);
-		data->cmd_nb++;
-	}
+	if (check_syntax(data, tockns) == -1)
+		return (clean_up(res, data, tockns));
+	create_add_cmd(&res, data, tockns);
 	while (tockns)
 	{
-		if (is_pipe(tockns) && tockns->next)
+		if (is_pipe(tockns))
 		{
-			if (is_pipe (tockns->next))
-			{
-				printf("syntax error");
-				return (NULL);
-			}
+			if (!tockns->next || check_syntax(data, tockns->next) == -1)
+				return (clean_up(res, data, tockns_ptr));
 			data->pipes_nb++;
-			cur = create_cmd_node(tockns->next);
-			if (cur)
-			{
-				add_cmd(&res, cur);
-				data->cmd_nb++;
-			}
+			create_add_cmd(&res, data, tockns->next);
 		}
-		tockns = tockns->next; // case: < // tockns->begin = "<" tockns->end = ""
+		tockns = tockns->next;
 	}
-	//printf("number of pipes= %i\n", data->pipes_nb);
 	free_tockns_lst(tockns_ptr);
-	return (res); // case: < //all pointed to NULL 
+	return (res);
 }

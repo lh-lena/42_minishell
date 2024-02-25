@@ -6,7 +6,7 @@
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:35:53 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/19 17:53:57 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/25 12:03:40 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ char	*copy_modified_str(t_data *data, char *str, size_t len)
 			copy_sqoutes(&temp_new, &str, data);
 		else if (*str == 34 && *str)
 			copy_dqoutes(&temp_new, &str, data);
-		else if (*str == '$' && (handle_name(*(str + 1)) || isvalid_var_name_char(*(str + 1))))
+		else if (*str == '$' && (handle_name(*(str + 1)) \
+		|| isvalid_var_name_char(*(str + 1))))
 			substitute_vars(&temp_new, &str, data);
 		else if (*str == '\\' && *(str + 1) != '\\')
 			str++;
@@ -62,7 +63,8 @@ static void	copy_dqoutes(char **new, char **str, t_data *data)
 	*str = *str + 1;
 	while (**str != 34 && **str)
 	{
-		if (**str == '$' && (*(*str + 1) == '?' || isvalid_var_name_char(*(*str + 1))))
+		if (**str == '$' && (*(*str + 1) == '?' \
+		|| isvalid_var_name_char(*(*str + 1))))
 		{
 			substitute_vars(new, str, data);
 		}
@@ -91,7 +93,7 @@ static void	substitute_vars(char **new, char **str, t_data *data)
 	else if (**str == '$' && isvalid_var_name_char(*(*str + 1)))
 	{
 		*str = *str + 1;
-		size = env_isvar_name(data->env_lst, *str);
+		size = env_isvar_name(data, *str);
 		str_copy(*new, env_var_value(data->env_lst, *str));
 		*new = *new + size;
 		while (isvalid_var_name_char(**str))

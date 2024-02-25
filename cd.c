@@ -6,16 +6,16 @@
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 18:17:34 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/19 13:09:14 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/25 16:05:49 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
 
-static int	check_dir(char *path);
 static void	tohome_dir(t_data *data);
 static void	toprev_dir(t_data *data);
 static void	change_dir(t_data *data, char *path);
+static void	chdir_error(t_data *data, char *path);
 
 void	cd_builtin(t_data *data, char **arr)
 {
@@ -27,28 +27,12 @@ void	cd_builtin(t_data *data, char **arr)
 		put_error(data, "bash: cd: too many arguments", 1);
 	else if (size == 1)
 		tohome_dir(data);
-	else if (ft_strncmp(arr[1], "~", ft_strlen(arr[1])) == 0 && size == 2)
-		tohome_dir(data);
 	else if (ft_strncmp(arr[1], "-", ft_strlen(arr[1])) == 0 && size == 2)
 		toprev_dir(data);
 	else if (check_dir(arr[1]) == 0)
-		put_error(data, "cd: No such file or directory", 1);
+		chdir_error(data, arr[1]);
 	else if (size == 2)
 		change_dir(data, arr[1]);
-}
-
-static int	check_dir(char *path)
-{
-	DIR	*temp_dir;
-
-	temp_dir = opendir(path);
-	if (temp_dir == NULL)
-	{
-		return (0);
-	}
-	if (closedir(temp_dir) == -1)
-		perror("closedir");
-	return (1);
 }
 
 static void	change_dir(t_data *data, char *path)
@@ -73,9 +57,23 @@ static void	change_dir(t_data *data, char *path)
 			put_error(data, strerror(errno), 1);
 	}
 	else
-		put_error(data, strerror(errno), 1);
+		chdir_error(data, path);
 	ft_free(&old_pwd);
 	ft_free(&new_pwd);
+}
+
+static void	chdir_error(t_data *data, char *path)
+{
+	if (errno == EACCES)
+	{
+		data->exit_status = 1;
+		ft_putstr_fd("bash: cd: ", 2);
+		ft_putstr_fd(path, 2);
+		ft_putstr_fd(": ", 2);
+		ft_putendl_fd("Permission denied", 2);
+	}
+	else
+		put_error(data, "bash: cd: No such file or directory", 1);
 }
 
 static void	tohome_dir(t_data *data)

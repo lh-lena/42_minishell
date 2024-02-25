@@ -6,7 +6,7 @@
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 15:35:16 by kdzhoha           #+#    #+#             */
-/*   Updated: 2024/02/18 14:48:17 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/25 17:29:15 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ char	*get_delim(char *str)
 	while (is_whitespace(str[i]))
 		i++;
 	if (str[i])
-		res = &str[i]; // added
+		res = &str[i];
 	return (res);
 }
 
@@ -70,13 +70,12 @@ void	open_pipes(t_data *data)
 	return ;
 }
 
-void	close_pipes(t_data *data, int indx)
+void	close_pipes(t_data *data)
 {
 	int	**fds;
 	int	i;
 	int	j;
 
-	(void)indx;
 	if (!data->pipe_fds)
 		return ;
 	fds = data->pipe_fds;
@@ -93,22 +92,13 @@ void	close_pipes(t_data *data, int indx)
 		}
 		i++;
 	}
-	// while (i < data->pipes_nb)
-	// {
-	// 	j = 0;
-	// 	while (j < 2)
-	// 	{
-	// 		if (indx == 0 && (i != indx && j != 1))
-	// 			close(fds[i][j]);
-	// 		else if (indx > 0)
-	// 		{
-	// 			if ((i != indx - 1 && j != 0) || (i != indx && j != 1))
-	// 				close(fds[i][j]);
-	// 		}
-	// 		else if (indx == -1)
-	// 			close(fds[i][j]);
-	// 		j++;
-	// 	}
-	// 	i++;
-	// }
+}
+
+void	close_pipes_free(t_data *data)
+{
+	if (data->pipe_fds != NULL)
+	{
+		close_pipes(data);
+		free_array(data->pipe_fds, data->pipes_nb);
+	}
 }

@@ -3,94 +3,61 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
+/*   By: kdzhoha <kdzhoha@student.42berlin.de >     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:37:24 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/20 14:08:28 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/23 17:10:18 by kdzhoha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
 
+void	ft_free_on_exit(t_data *data)
+{
+	if (!data)
+		return ;
+	if (data->env_lst)
+		ft_free_lst_env(data->env_lst);
+	ft_free_data(data);
+	free(data);
+}
+
+void	free_cmd_pipes(t_data *data)
+{
+	free_command_lst(data->cmd);
+	data->cmd = NULL;
+	data->cmd_nb = 0;
+	data->pipe_fds = NULL;
+	data->pipes_nb = 0;
+	data->pr_id = NULL;
+}
+
 void	ft_free_data(t_data	*data)
 {
-	// printf("data->env_lst = %p\n", data->env_lst); // delete
-	if (data->env_lst)
-	{
-		ft_free_lst_env(data->env_lst);
-		// ft_putendl_fd("free data->env_lst = OK", 1); // delete
-	}
-	// printf("data->new_envp = %p\n", data->new_envp); // delete
 	if (data->new_envp)
 	{
 		ft_free_arr(data->new_envp);
-		// ft_putendl_fd("free data->new_envp = OK", 1); // delete
+		data->new_envp = NULL;
 	}
-	// printf("data->cmd = %p\n", data->cmd); // delete
 	if (data->cmd)
 	{
 		free_command_lst(data->cmd);
-		// ft_putendl_fd("free data->cmd = OK", 1); // delete
+		data->cmd = NULL;
 	}
-	// printf("data = %p\n", data); // delete
-	if (data)
+	if (data->pipes_nb)
 	{
-		free(data);
-		// ft_putendl_fd("free data = OK", 1); // delete
+		close_pipes(data);
+		free_array(data->pipe_fds, data->pipes_nb);
+		data->pipe_fds = NULL;
+		data->pipes_nb = 0;
 	}
-}
-
-void	ft_free_node_env(t_env *node)
-{
-	if (node->name)
-		ft_free(&node->name);
-	if (node->value)
-		ft_free(&node->value);
-	if (node)
-		free(node);
-	node = NULL;
-}
-
-void	ft_free_lst_env(t_env *lst)
-{
-	t_env	*temp;
-
-	if (lst == NULL)
-		return ;
-	while (lst != NULL)
+	if (data->input)
+		ft_free(&data->input);
+	if (data->pr_id)
 	{
-		temp = lst->next;
-		ft_free_node_env(lst);
-		lst = temp;
+		free(data->pr_id);
+		data->pr_id = NULL;
 	}
-}
-
-void	ft_delnode_env(t_env **lst, char *name)
-{
-	t_env	*cur;
-	t_env	*prev;
-
-	if (lst == NULL || *lst == NULL || name == NULL)
-		return ;
-	cur = *lst;
-	prev = NULL;
-	if (ft_strncmp(cur->name, "_", ft_strlen(cur->name)) == 0)
-		return ;
-	if (ft_strncmp(cur->name, name, ft_strlen(cur->name)) == 0)
-	{
-		*lst = cur->next;
-		ft_free_node_env(cur);
-		return ;
-	}
-	while (cur && (ft_strncmp(cur->name, name, ft_strlen(cur->name)) != 0))
-	{
-		prev = cur;
-		cur = cur->next;
-	}
-	if (cur == NULL)
-		return ;
-	prev->next = cur->next;
-	ft_free_node_env(cur);
 }
 
 void	ft_free_arr(char **arr)

@@ -6,7 +6,7 @@
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:40:56 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/20 14:43:20 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/25 16:40:27 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@
 
 # define ETX 0
 
-extern int g_sig_status;
+extern int	g_sig_status;
 
 // str_utils
 int		ft_isspace(int c);
@@ -46,18 +46,13 @@ int		is_whitespace_str(char *str);
 void	str_copy(char *s1, char *s2);
 int		isspecial_char(int c);
 int		handle_name(int c);
-int		is_ctrl_c(char *str);
+int		check_dir(char *path);
 
 // arr_utils
 size_t	ft_arrsize(char	**arr);
 size_t	ft_arrlen(char **arr);
 void	print_arr(char **arr);
 void	ft_free_arr(char **arr);
-
-// expand input
-void	expand_input(t_data *data);
-char	**expand_arr(char **arr, t_data *data);
-int	alloc_expand(char **arr, t_data *data);
 
 // list_utils
 t_env	*ft_new_node_env(char	*str);
@@ -71,12 +66,22 @@ void	ft_free_node_env(t_env *node);
 // free
 void	ft_free_data(t_data	*data);
 void	ft_free(char **str);
+void	ft_free_on_exit(t_data *data);
+void	free_cmd_pipes(t_data *data);
 
 // error_handle
 void	put_error(t_data *data, char *msg, int er_num);
+void	*put_error_free(t_data *data, char *msg, int er_num);
+
+// expand_input
+int		alloc_expand(char **arr, t_data *data);
+char	**expand_arr(char **arr, t_data *data);
+void	expand_input(t_data *data);
+int		ft_count_words(char *str, char c);
 
 // execute
 void	execve_tr(t_data *data, char **arr);
+int		check_builtin(t_data *data, char **arr);
 
 // heredoc
 void	read_heredoc(t_data *data, char *delim, int fd);
@@ -104,7 +109,6 @@ void	env_replace_or_create_node(t_env *envp, char *input);
 
 char	**get_var_name_arr(char *s, char c);
 char	**var_split(char *s, char c);
-int		ft_count_words(char *str, char c);
 
 // edit_qoutes_str
 char	*substitute_str(t_data *data, char *str);
@@ -122,7 +126,7 @@ void	pwd_cmd(t_data *data);
 void	env_print(t_data *data);
 t_env	*ft_getenv(char **envp);
 int		env_update_val(t_env *envp, char *name, char *value);
-size_t	env_isvar_name(t_env *envp, char *str);
+size_t	env_isvar_name(t_data *data, char *str);
 char	*copy_var_name(char *str);
 char	**new_envp(t_data *data);
 
@@ -130,8 +134,9 @@ char	**new_envp(t_data *data);
 void	unset(t_data *data, char **input);
 
 // exit
-int		is_exit(t_data *data);
+int		is_exit(t_data *data, char **arr);
 void	exit_handler(t_data *data);
+size_t	exit_len(t_data *data);
 
 // -- handel signals -- Crtl+C Crtl+D Ctrl+'\'
 void	signals(void);
@@ -139,6 +144,5 @@ void	sig_handle(int sig_num);
 void	manage_signal(void);
 void	sig_handle_child(int sig_num);
 void	signal_ignr(void);
-
 
 #endif

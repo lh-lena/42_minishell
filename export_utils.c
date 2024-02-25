@@ -6,13 +6,11 @@
 /*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:37:01 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/14 13:47:32 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/22 15:32:58 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
-
-static int	count_qoutes(char **str, int c);
 
 int	isvalid_export_input(char *str)
 {
@@ -65,43 +63,29 @@ int	isvalid_var_name_char(int c)
 	return (1);
 }
 
-// return 0 - if no quotes, -1 - if qouts don't close, 1 = ', 2 = "
-int is_quotes(char *value)
+// return 0 - if no quotes, -1 - if qouts don't close, 39 = ', 34 = "
+int	is_quotes(char *value)
 {
 	int		res;
-	char	*temp;
+	int		i;
+	char	c;
 
 	res = 0;
-	temp = value;
-	while (*temp)
+	i = -1;
+	c = 0;
+	while (value[++i] != '\0')
 	{
-		if (*temp == 39)
+		if (value[i] == 39 || value[i] == 34)
 		{
-			res = count_qoutes(&temp, 39);
+			c = value[i];
+			i++;
+			while (value[i] != c && value[i])
+				i++;
+			if (value[i] == c)
+				res = c;
+			else
+				return (-1);
 		}
-		else if (*temp == 34)
-		{
-			res = count_qoutes(&temp, 34);
-		}
-		temp++;
-	}
-	return (res);
-}
-
-static int	count_qoutes(char **str, int c)
-{
-	int	res;
-
-	if (c == 39)
-		res = 1;
-	else if (c == 34)
-		res = 2;
-	*str = *str + 1;
-	while (**str != c)
-	{
-		if (**str == '\0')
-			return (-1);
-		*str = *str + 1;
 	}
 	return (res);
 }
