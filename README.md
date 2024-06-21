@@ -39,7 +39,7 @@ The goal of the project is to recreate a simplified version of a Unix shell, cap
 ### Installing and running the project:
 1. Clone the repository:
 ```C
-    git clone git@github.com:lh-lena/minishell.git
+    git clone git@github.com:lh-lena/minishell.git minishell
 ```
 2. Navigate to the project directory:
 ```C
@@ -61,9 +61,7 @@ The goal of the project is to recreate a simplified version of a Unix shell, cap
 - `make re` - fclean + all
 - `make run` - allows project execution without memory leak caused by readline
 
-# Common Instructions
-- The project must be written in C
-- 
+
 
 
 
