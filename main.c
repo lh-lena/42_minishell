@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/03 16:06:19 by kdzhoha           #+#    #+#             */
-/*   Updated: 2024/02/25 16:26:58 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/29 09:53:38 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,9 +105,10 @@ int	main(int argc, char **argv, char **envp)
 	t_data		*data;
 
 	(void)argv;
-	if (argc != 1)
-		return (0);
-	rl_catch_signals = 0;
+	(void)argc;
+	//if (argc != 1)
+	//	return (0);
+	// rl_catch_signals = 0;
 	signals();
 	data = (t_data *)malloc(sizeof(t_data));
 	if (!data)

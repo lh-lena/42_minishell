@@ -1,6 +1,6 @@
 NAME	= minishell
 CC		= cc
-CFLAGS	= -g -Wall -Wextra -Werror
+CFLAGS	= -g -Wall -Wextra -Werror -fsanitize=address
 SRCS	= main.c arr_utils.c cd.c cmd_utils.c expand_str.c expand_str_utils.c  \
 			expand_str_utils_2.c env_utils.c echo.c signal.c \
 			env.c errors.c exit.c get_replaced_string.c \
@@ -18,6 +18,9 @@ all:	$(NAME)
 $(NAME): $(OBJS)
 		@make -C $(LIBFT)
 		$(CC) $(CFLAGS) $(OBJS) -L./$(LIBFT) -lft -lreadline -o $(NAME)
+
+run:
+	valgrind --suppressions=suppressions.supp --leak-check=full --show-leak-kinds=all --child-silent-after-fork=yes ./minishell
 
 clean:
 	rm -rf $(OBJS)

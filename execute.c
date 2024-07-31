@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/26 13:53:45 by kdzhoha           #+#    #+#             */
-/*   Updated: 2024/02/25 18:36:04 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/29 10:39:20 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ int	check_cmd(t_data *data, char **arr)
 	temp = arr[0];
 	if (ft_strncmp(temp, "exit", ft_strlen(temp)) == 0)
 	{
-		if (is_exit(data, arr) && data->pipes_nb == 0)
+		if (is_exit(data, arr)) // && data->pipes_nb == 0
 			exit_handler(data);
 	}
 	else if (ft_strncmp(temp, "pwd", ft_strlen(temp)) == 0)

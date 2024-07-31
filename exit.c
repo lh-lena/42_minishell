@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohladkov <ohladkov@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ohladkov <ohladkov@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 13:36:40 by ohladkov          #+#    #+#             */
-/*   Updated: 2024/02/25 16:39:45 by ohladkov         ###   ########.fr       */
+/*   Updated: 2024/02/29 10:41:13 by ohladkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,15 @@ int	is_exit(t_data *data, char **arr)
 	{
 		i = 0;
 		data->exit_status = 1;
-		ft_putendl_fd("exit\nbash: exit: too many arguments", 2);
+		if (data->pipes_nb == 0)
+			ft_putendl_fd("exit", 2);
+
+		ft_putendl_fd("bash: exit: too many arguments", 2);
+		if (data->pipes_nb > 0)
+			exit(data->exit_status);
 	}
+	if (data->pipes_nb > 0)
+		exit(data->exit_status);
 	return (i);
 }
 
@@ -53,6 +60,11 @@ static int	check_exit_arg(t_data *data, char *str)
 		ft_putstr_fd("bash: exit: ", 2);
 		ft_putstr_fd(str, 2);
 		ft_putendl_fd(": numeric argument required", 2);
+		if (data->pipes_nb > 0)
+		{
+			free(tmp);
+			exit(data->exit_status);
+		}
 	}
 	free(tmp);
 	return (i);
@@ -73,7 +85,7 @@ void	exit_handler(t_data *data)
 	int		num;
 
 	num = data->exit_status;
-	rl_clear_history();
+	// rl_clear_history();
 	if (data)
 		ft_free_on_exit(data);
 	ft_putendl_fd("exit", 2);

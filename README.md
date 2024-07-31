@@ -61,7 +61,14 @@ The goal of the project is to recreate a simplified version of a Unix shell, cap
 - `make re` - fclean + all
 - `make run` - allows project execution without memory leak caused by readline
 
+<<<<<<< Updated upstream
 
+=======
+# Common Instructions
+- The project must be written in C
+- function no longer 25 lines
+- 
+>>>>>>> Stashed changes
 
 
 

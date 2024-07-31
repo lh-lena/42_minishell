@@ -10,5 +10,3 @@
     ...
     fun:add_history
 }
-// run:
-//	valgrind --suppressions=suppressions.supp --leak-check=full --show-leak-kinds=all --child-silent-after-fork=yes ./minishell
