@@ -45,13 +45,10 @@ The goal of the project is to recreate a simplified version of a Unix shell, cap
 ```C
     cd minishell
 ```
-3. Compile the project: 
+3. Compile and run the project: 
 ```C
-    make
-```
-4. Run the Minishell: 
-```C
-    ./minishell or make run
+    make && ./minishell
+    (or make run)
 ```
 
 # Makefile Available Targets:
@@ -61,14 +58,23 @@ The goal of the project is to recreate a simplified version of a Unix shell, cap
 - `make re` - fclean + all
 - `make run` - allows project execution without memory leak caused by readline
 
-<<<<<<< Updated upstream
-
-=======
 # Common Instructions
 - The project must be written in C
-- function no longer 25 lines
-- 
->>>>>>> Stashed changes
+- Function no longer 25 lines
+- A single file contains no more 5 functions
+- Only one global variable
+- Makefile: NAME, all, clean, fclean, re
+- Allowed functions:
+   readline, rl_clear_history, rl_on_new_line,
+   rl_replace_line, rl_redisplay, add_history,
+   printf, malloc, free, write, access, open, read,
+   close, fork, wait, waitpid, wait3, wait4, signal,
+   sigaction, sigemptyset, sigaddset, kill, exit,
+   getcwd, chdir, stat, lstat, fstat, unlink, execve,
+   dup, dup2, pipe, opendir, readdir, closedir,
+   strerror, perror, isatty, ttyname, ttyslot, ioctl,
+   getenv, tcsetattr, tcgetattr, tgetent, tgetflag,
+   tgetnum, tgetstr, tgoto, tputs
 
 
 
