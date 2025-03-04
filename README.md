@@ -48,7 +48,10 @@ The goal of the project is to recreate a simplified version of a Unix shell, cap
 3. Compile and run the project: 
 ```C
     make && ./minishell
-    (or make run)
+```
+or
+```C
+   make run
 ```
 
 # Makefile Available Targets:
