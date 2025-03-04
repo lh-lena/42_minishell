@@ -62,6 +62,7 @@ or
 - `make run` - allows project execution without memory leak caused by readline
 
 # Common Instructions
+- Take **bash** as a reference
 - The project must be written in C
 - Function no longer 25 lines
 - A single file contains no more 5 functions
